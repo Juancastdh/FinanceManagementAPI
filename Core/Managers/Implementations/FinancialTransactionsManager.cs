@@ -34,6 +34,8 @@ namespace FinanceManagement.Core.Managers.Implementations
             IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
 
             financialTransactionsRepository.DeleteById(financialTransaction.Id);
+
+            UnitOfWork.SaveChanges();
         }
 
         public IEnumerable<FinancialTransaction> GetAllFinancialTransactions()
@@ -68,7 +70,11 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         public void UpdateFinancialTransaction(FinancialTransaction financialTransaction)
         {
-            throw new NotImplementedException();
+            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+
+            financialTransactionsRepository.Update(financialTransaction);
+
+            UnitOfWork.SaveChanges();
         }
     }
 }
