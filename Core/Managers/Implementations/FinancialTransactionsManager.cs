@@ -53,9 +53,9 @@ namespace FinanceManagement.Core.Managers.Implementations
 
             IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense));
 
-            IEnumerable<FinancialTransaction> incomeTransactions = financialTransactions.Where(f => f.IsExpense == true);
+            IEnumerable<FinancialTransaction> incomeTransactions = financialTransactions.Where(f => f.IsExpense == false);
 
-            IEnumerable<FinancialTransaction> expenseTransactions = financialTransactions.Where(f => f.IsExpense == false);
+            IEnumerable<FinancialTransaction> expenseTransactions = financialTransactions.Where(f => f.IsExpense == true);
 
             decimal sumOfIncomeTransactionValues = incomeTransactions.Sum(f => f.Value);
 

@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.Json;
 using Xunit;
 
@@ -102,7 +103,7 @@ namespace FinanceManagement.Tests
             financialTransactionsManager.DeleteFinancialTransaction(transactionToBeDeleted);
 
             //Assert
-            Assert.Equal(orderedMockFinancialTransactionsDatabase, expectedFinancialTransactionsDatabase);
+            Assert.Equal(expectedFinancialTransactionsDatabase, orderedMockFinancialTransactionsDatabase);
 
         }
 
@@ -138,8 +139,95 @@ namespace FinanceManagement.Tests
             IEnumerable<FinancialTransaction> returnedFinancialTransactions = financialTransactionsManager.GetAllFinancialTransactions();
 
             //Assert
-            Assert.Equal(returnedFinancialTransactions, mockFinancialTransactionsDatabase);
+            Assert.Equal(mockFinancialTransactionsDatabase, returnedFinancialTransactions);
         }
+
+
+
+        [Theory]
+        [InlineData(300, null, null, null)]
+        [InlineData(200, 1, null, null)]
+        [InlineData(200, 2, null, null)]
+        [InlineData(-100, 3, null, null)]
+        [InlineData(0, 5, null, null)]
+        [InlineData(250, null, 1, null)]
+        [InlineData(200, null, 2, null)]
+        [InlineData(-150, null, 4, null)]
+        [InlineData(0, null, 6, null)]
+        [InlineData(200, 1, 1, null)]
+        [InlineData(50, 3, 1, null)]
+        [InlineData(0, 2, 4, null)]
+        [InlineData(550, null, null, false)]
+        [InlineData(-250, null, null, true)]
+        public void GetSumOfFinancialTransactionValues_Returns_Sum_Of_All_Incomes_Minus_All_Expenses(decimal expectedResult, int? periodId = null, int? categoryId = null, bool? isExpense = null)
+        {
+
+            //Setup
+            List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>?>(), null, "")).Returns(mockFinancialTransactionsDatabase.Where(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense)));
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            //Arrange
+            mockFinancialTransactionsDatabase.Add(new FinancialTransaction
+            {
+                Id = 1,
+                Description = "Test Income 1",
+                IsExpense = false,
+                Value = 300,
+                PeriodId = 1,
+                CategoryId = 1
+            });
+            mockFinancialTransactionsDatabase.Add(new FinancialTransaction
+            {
+                Id = 2,
+                Description = "Test Income 2",
+                IsExpense = false,
+                Value = 200,
+                PeriodId = 2,
+                CategoryId = 2
+            });
+            mockFinancialTransactionsDatabase.Add(new FinancialTransaction
+            {
+                Id = 3,
+                Description = "Test Income 3",
+                IsExpense = false,
+                Value = 50,
+                PeriodId = 3,
+                CategoryId = 1
+            });
+            mockFinancialTransactionsDatabase.Add(new FinancialTransaction
+            {
+                Id = 3,
+                Description = "Test Expense 1",
+                IsExpense = true,
+                Value = 100,
+                PeriodId = 1,
+                CategoryId = 1
+            });
+            mockFinancialTransactionsDatabase.Add(new FinancialTransaction
+            {
+                Id = 4,
+                Description = "Test Expense 2",
+                IsExpense = true,
+                Value = 150,
+                PeriodId = 3,
+                CategoryId = 4
+            });
+
+
+
+            decimal obtainedResult = financialTransactionsManager.GetSumOfFinancialTransactionValues(periodId, categoryId, isExpense);
+
+            //Assert
+
+            Assert.Equal(expectedResult, obtainedResult);
+
+        }
+
+
 
     }
 }

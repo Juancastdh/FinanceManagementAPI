@@ -78,7 +78,7 @@ namespace FinanceManagement.Tests
             IEnumerable<Category> returnedCategories = categoriesManager.GetAllCategories();
 
             //Assert
-            Assert.Equal(returnedCategories, mockCategoriesDatabase);
+            Assert.Equal(mockCategoriesDatabase, returnedCategories);
 
 
 
