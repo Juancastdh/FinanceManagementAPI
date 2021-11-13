@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FinanceManagement.API.DTOs.Period;
+using FinanceManagement.API.DTOs.Periods;
 using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers;
 using Microsoft.AspNetCore.Http;

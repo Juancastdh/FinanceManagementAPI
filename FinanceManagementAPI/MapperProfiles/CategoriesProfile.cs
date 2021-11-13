@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FinanceManagement.API.DTOs;
-using FinanceManagement.API.DTOs.Category;
+using FinanceManagement.API.DTOs.Categories;
 using FinanceManagement.Core.Entities;
 
 namespace FinanceManagement.API.MapperProfiles

@@ -1,4 +1,4 @@
-﻿namespace FinanceManagement.API.DTOs.Period
+﻿namespace FinanceManagement.API.DTOs.Periods
 {
     public class PeriodReadDto
     {
