@@ -9,13 +9,13 @@ using System.Text;
 
 namespace FinanceManagement.Services
 {
-    public class BaseRepository<T> : IRepository<T> where T : class
+    public class BaseRepositoryService<T> : IRepository<T> where T : class
     {
 
         internal DatabaseContext Context;
         internal DbSet<T> DatabaseSet;
 
-        public BaseRepository(DatabaseContext context)
+        public BaseRepositoryService(DatabaseContext context)
         {
             Context = context;
             DatabaseSet = context.Set<T>();
