@@ -1,4 +1,4 @@
-﻿namespace FinanceManagement.API.DTOs
+﻿namespace FinanceManagement.API.DTOs.Category
 {
     public class CategoryCreateDto
     {

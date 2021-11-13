@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FinanceManagement.API.DTOs;
+using FinanceManagement.API.DTOs.Category;
 using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers;
 using Microsoft.AspNetCore.Mvc;
