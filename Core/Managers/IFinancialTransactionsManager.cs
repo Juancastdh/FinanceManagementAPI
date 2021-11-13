@@ -14,8 +14,8 @@ namespace FinanceManagement.Core.Managers
         void UpdateFinancialTransaction(FinancialTransaction financialTransaction);
         void DeleteFinancialTransaction(FinancialTransaction financialTransaction);
         IEnumerable<FinancialTransaction> GetAllFinancialTransactions();
-        decimal GetSumOfFinancialTransactions(Expression<Func<FinancialTransaction, bool>>? filter = null, Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>? orderBy = null);
-        FinancialReport GetFinancialReport(Expression<Func<FinancialTransaction, bool>>? filter = null, Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>? orderBy = null);
+        decimal GetSumOfFinancialTransactions(int? periodId = null, int? categoryId = null, bool? isExpense = null);
+        FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null);
 
 
     }

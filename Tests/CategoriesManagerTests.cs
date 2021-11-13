@@ -18,12 +18,12 @@ namespace FinanceManagement.Tests
         public void AddCategory_Adds_Categories_Correctly_To_Repository()
         {
             //Setup
-            List<Category> mockCategoryDatabase = new List<Category>();
-            Mock<IRepository<Category>>  MockCategoryRepository = new Mock<IRepository<Category>>();
-            MockCategoryRepository.Setup(repository => repository.Add(It.IsAny<Category>())).Callback((Category category) => mockCategoryDatabase.Add(category));
-            Mock<IUnitOfWork> MockUnitOfWork = new Mock<IUnitOfWork>();
-            MockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(MockCategoryRepository.Object);
-            ICategoriesManager categoriesManager = new CategoriesManager(MockUnitOfWork.Object);
+            List<Category> mockCategoriesDatabase = new List<Category>();
+            Mock<IRepository<Category>>  mockCategoriesRepository = new Mock<IRepository<Category>>();
+            mockCategoriesRepository.Setup(repository => repository.Add(It.IsAny<Category>())).Callback((Category category) => mockCategoriesDatabase.Add(category));
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
             //Arrange
             Category expectedCategory = new Category
@@ -37,7 +37,7 @@ namespace FinanceManagement.Tests
 
             //Act
             categoriesManager.AddCategory(expectedCategory);
-            Category addedCategory = mockCategoryDatabase.Single();
+            Category addedCategory = mockCategoriesDatabase.Single();
             string addedCategoryString = JsonSerializer.Serialize(addedCategory);
 
             //Assert
@@ -73,6 +73,8 @@ namespace FinanceManagement.Tests
                 Percentage = 10
                 }
             );
+
+            //Act
             IEnumerable<Category> returnedCategories = categoriesManager.GetAllCategories();
 
             //Assert
