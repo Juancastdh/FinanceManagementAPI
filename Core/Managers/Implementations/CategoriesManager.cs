@@ -34,6 +34,20 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork.SaveChanges();
         }
 
+        public Category GetCategoryById(int id)
+        {
+            IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
+            Category category = categoriesRepository.GetById(id);
+            return category;
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
+            categoriesRepository.Update(category);
+            UnitOfWork.SaveChanges();
+        }
+
 
     }
 }
