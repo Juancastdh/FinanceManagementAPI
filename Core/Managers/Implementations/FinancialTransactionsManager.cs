@@ -46,15 +46,25 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         public FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null)
         {
-            throw new NotImplementedException();
-        }
-
-        public decimal GetSumOfFinancialTransactionValues(int? periodId = null, int? categoryId = null, bool? isExpense = null)
-        {
             IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-
             IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense));
 
+            financialTransactions = financialTransactions.OrderBy(transaction => transaction.Date);
+
+            decimal sumOfFinancialTransactionsValue = GetSumOfFinancialTransactionValues(financialTransactions);
+
+            FinancialReport financialReport = new FinancialReport
+            {
+                FinancialTransactions = financialTransactions,
+                TotalValue = sumOfFinancialTransactionsValue
+            };
+
+            return financialReport;
+
+        }
+
+        public decimal GetSumOfFinancialTransactionValues(IEnumerable<FinancialTransaction> financialTransactions)
+        {
             IEnumerable<FinancialTransaction> incomeTransactions = financialTransactions.Where(f => f.IsExpense == false);
 
             IEnumerable<FinancialTransaction> expenseTransactions = financialTransactions.Where(f => f.IsExpense == true);
