@@ -9,6 +9,7 @@ namespace FinanceManagement.API.MapperProfiles
         public CategoriesProfile()
         {
             CreateMap<Category, CategoryReadDto>();
+            CreateMap<CategoryCreateDto, Category>();
         }        
     }
 }

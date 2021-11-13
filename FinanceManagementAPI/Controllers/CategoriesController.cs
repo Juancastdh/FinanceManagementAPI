@@ -22,13 +22,23 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetAllCategories()
         {
             IEnumerable<Category> categories = CategoriesManager.GetAllCategories();
 
             IEnumerable<CategoryReadDto> categoryReadDtos = Mapper.Map<IEnumerable<CategoryReadDto>>(categories);
 
             return Ok(categoryReadDtos);
+        }
+
+        [HttpPost]
+        public IActionResult CreateCategory([FromBody] CategoryCreateDto category)
+        {
+            Category categoryToCreate = Mapper.Map<Category>(category);
+
+            CategoriesManager.AddCategory(categoryToCreate);
+
+            return Ok();
         }
     }
 }
