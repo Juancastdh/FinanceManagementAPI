@@ -12,7 +12,7 @@ namespace FinanceManagement.Core.Managers
     {
         void AddFinancialTransaction(FinancialTransaction financialTransaction);
         void UpdateFinancialTransaction(FinancialTransaction financialTransaction);
-        void DeleteFinancialTransaction(FinancialTransaction financialTransaction);
+        void DeleteFinancialTransactionById(int id);
         IEnumerable<FinancialTransaction> GetAllFinancialTransactions();
         decimal GetSumOfFinancialTransactionValues(IEnumerable<FinancialTransaction> financialTransactions);
         FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null);

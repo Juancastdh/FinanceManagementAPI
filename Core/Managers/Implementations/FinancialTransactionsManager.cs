@@ -29,11 +29,12 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork.SaveChanges();
         }
 
-        public void DeleteFinancialTransaction(FinancialTransaction financialTransaction)
+        public void DeleteFinancialTransactionById(int id)
         {
+
             IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
 
-            financialTransactionsRepository.DeleteById(financialTransaction.Id);
+            financialTransactionsRepository.DeleteById(id);
 
             UnitOfWork.SaveChanges();
         }

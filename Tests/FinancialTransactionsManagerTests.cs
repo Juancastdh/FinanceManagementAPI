@@ -56,7 +56,7 @@ namespace FinanceManagement.Tests
         }
 
         [Fact]
-        public void DeleteFinancialTransaction_Removes_FinancialTransactions_Correctly_From_Repository()
+        public void DeleteFinancialTransactionById_Removes_FinancialTransactions_Correctly_From_Repository()
         {
 
             //Setup
@@ -100,7 +100,7 @@ namespace FinanceManagement.Tests
             expectedFinancialTransactionsDatabase = expectedFinancialTransactionsDatabase.OrderBy(x => x.Id);
 
             //Act
-            financialTransactionsManager.DeleteFinancialTransaction(transactionToBeDeleted);
+            financialTransactionsManager.DeleteFinancialTransactionById(transactionToBeDeleted.Id);
 
             //Assert
             Assert.Equal(expectedFinancialTransactionsDatabase, orderedMockFinancialTransactionsDatabase);

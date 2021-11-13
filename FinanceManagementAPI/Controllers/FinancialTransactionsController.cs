@@ -29,5 +29,33 @@ namespace FinanceManagement.API.Controllers
 
             return Ok(financialTransactionReadDtos);
         }
+
+        [HttpPost]
+        public IActionResult CreateFinancialTransaction([FromBody] FinancialTransactionCreateDto financialTransaction)
+        {
+            FinancialTransaction financialTransactionToBeCreated = Mapper.Map<FinancialTransaction>(financialTransaction);
+
+            FinancialTransactionsManager.AddFinancialTransaction(financialTransactionToBeCreated);
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public IActionResult UpdateFinancialTransaction([FromBody] FinancialTransactionReadDto financialTransaction)
+        {
+            FinancialTransaction financialTransactionToBeUpdated = Mapper.Map<FinancialTransaction>(financialTransaction);
+
+            FinancialTransactionsManager.UpdateFinancialTransaction(financialTransactionToBeUpdated);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteFinancialTransactionById(int id)
+        {
+            FinancialTransactionsManager.DeleteFinancialTransactionById(id);
+
+            return Ok();           
+        } 
     }
 }

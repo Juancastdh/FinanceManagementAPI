@@ -11,6 +11,7 @@ namespace FinanceManagement.API.MapperProfiles
         {
             CreateMap<FinancialTransaction, FinancialTransactionReadDto>();
             CreateMap<FinancialTransactionCreateDto, FinancialTransaction>();
+            CreateMap<FinancialTransactionReadDto, FinancialTransaction>();
         }
 
     }
