@@ -12,5 +12,7 @@ namespace FinanceManagement.Core.Entities
         public int CategoryId { get; set; }
         public virtual Category? Category { get; set; }
         public bool IsExpense { get; set; }
+        public int PeriodId { get; set; }
+        public virtual Period? Period { get; set; }
     }
 }

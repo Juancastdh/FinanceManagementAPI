@@ -4,6 +4,7 @@ using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FinanceManagement.Core.Managers.Implementations
@@ -46,9 +47,23 @@ namespace FinanceManagement.Core.Managers.Implementations
             throw new NotImplementedException();
         }
 
-        public decimal GetSumOfFinancialTransactions(int? periodId = null, int? categoryId = null, bool? isExpense = null)
+        public decimal GetSumOfFinancialTransactionValues(int? periodId = null, int? categoryId = null, bool? isExpense = null)
         {
-            throw new NotImplementedException();
+            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+
+            IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense));
+
+            IEnumerable<FinancialTransaction> incomeTransactions = financialTransactions.Where(f => f.IsExpense == true);
+
+            IEnumerable<FinancialTransaction> expenseTransactions = financialTransactions.Where(f => f.IsExpense == false);
+
+            decimal sumOfIncomeTransactionValues = incomeTransactions.Sum(f => f.Value);
+
+            decimal sumOfExpenseTransactionValues = expenseTransactions.Sum(f => f.Value);
+
+            decimal sumOfFinancialTransactionValues = sumOfIncomeTransactionValues - sumOfExpenseTransactionValues;
+
+            return sumOfFinancialTransactionValues;
         }
 
         public void UpdateFinancialTransaction(FinancialTransaction financialTransaction)
