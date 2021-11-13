@@ -7,7 +7,7 @@ using System.Text;
 
 namespace FinanceManagement.Core.Managers.Implementations
 {
-    public class CategoriesManager
+    public class CategoriesManager: ICategoriesManager
     {
         private readonly IUnitOfWork UnitOfWork;
 
@@ -16,7 +16,7 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork = unitOfWork;
         }
 
-        public IEnumerable<Category> GetCategories()
+        public IEnumerable<Category> GetAllCategories()
         {
             IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
