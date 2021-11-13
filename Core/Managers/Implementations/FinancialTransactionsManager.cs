@@ -30,7 +30,9 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         public void DeleteFinancialTransaction(FinancialTransaction financialTransaction)
         {
-            throw new NotImplementedException();
+            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+
+            financialTransactionsRepository.DeleteById(financialTransaction.Id);
         }
 
         public IEnumerable<FinancialTransaction> GetAllFinancialTransactions()
