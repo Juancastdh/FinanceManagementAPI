@@ -15,7 +15,7 @@ namespace FinanceManagement.Tests
     {
 
         [Fact]
-        public void AddCategory_Adds_Categories_Correctly()
+        public void AddCategory_Adds_Categories_Correctly_To_Repository()
         {
             //Setup
             List<Category> mockCategoryDatabase = new List<Category>();
@@ -42,6 +42,43 @@ namespace FinanceManagement.Tests
 
             //Assert
             Assert.Equal(expectedCategoryString, addedCategoryString);
+        }
+
+
+        [Fact]
+        public void GetAllCategories_Returns_All_Categories_From_Repository()
+        {
+            //Setup
+            List<Category> mockCategoryDatabase = new List<Category>();
+            Mock<IRepository<Category>> MockCategoryRepository = new Mock<IRepository<Category>>();
+            MockCategoryRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockCategoryDatabase);
+            Mock<IUnitOfWork> MockUnitOfWork = new Mock<IUnitOfWork>();
+            MockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(MockCategoryRepository.Object);
+            ICategoriesManager categoriesManager = new CategoriesManager(MockUnitOfWork.Object);
+
+
+            //Arrange
+            mockCategoryDatabase.Add(new Category
+            {
+                Id = 1,
+                Name = "TestCategory1",
+                FinancialTransactions = new List<FinancialTransaction>(),
+                Percentage = 5
+            });
+            mockCategoryDatabase.Add(new Category
+            {
+                Id = 2,
+                Name = "TestCategory2",
+                FinancialTransactions = new List<FinancialTransaction>(),
+                Percentage = 10
+                }
+            );
+            IEnumerable<Category> returnedCategories = categoriesManager.GetAllCategories();
+
+            //Assert
+            Assert.Equal(returnedCategories, mockCategoryDatabase);
+
+
 
         }
     }
