@@ -2,6 +2,7 @@
 using FinanceManagement.API.DTOs.FinancialTransactions;
 using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers;
+using FinanceManagement.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,5 +58,16 @@ namespace FinanceManagement.API.Controllers
 
             return Ok();           
         } 
+
+        [HttpGet("FinancialReport")]    
+        public IActionResult GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null)
+        {
+            FinancialReport financialReport = FinancialTransactionsManager.GetFinancialReport(periodId, categoryId, isExpense);
+
+            FinancialReportReadDto financialReportReadDto = Mapper.Map<FinancialReportReadDto>(financialReport);
+
+            return Ok(financialReportReadDto);
+
+        }
     }
 }
