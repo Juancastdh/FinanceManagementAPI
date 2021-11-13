@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase("testDb"));
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FinanceManagementDatabase")));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICategoriesManager, CategoriesManager>();
 builder.Services.AddScoped<IPeriodsManager, PeriodsManager>();
@@ -37,6 +37,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-PrepareDatabase.Seed(app);
+//PrepareDatabase.Seed(app);
 
 app.Run();
