@@ -1,4 +1,6 @@
 ﻿using FinanceManagement.Core.Repositories;
+using FinanceManagement.DataAccess;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,29 +12,70 @@ namespace FinanceManagement.Services
     public class BaseRepository<T> : IRepository<T> where T : class
     {
 
-        public void Add(T entity)
+        internal DatabaseContext Context;
+        internal DbSet<T> DatabaseSet;
+
+        public BaseRepository(DatabaseContext context)
         {
-            throw new NotImplementedException();
+            Context = context;
+            DatabaseSet = context.Set<T>();
         }
 
-        public void Delete(T entity)
+        public void Add(T entity)
         {
-            throw new NotImplementedException();
+            DatabaseSet.Add(entity);
+        }
+
+        public void DeleteById(int id)
+        {
+            T entityToDelete = DatabaseSet.Find(id);
+            Delete(entityToDelete);
+        }
+
+        private void Delete(T entity)
+        {
+            if(Context.Entry(entity).State == EntityState.Detached)
+            {
+                DatabaseSet.Attach(entity);
+            }
+
+            DatabaseSet.Remove(entity);
         }
 
         public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, string includeProperties = "")
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = DatabaseSet;
+
+            if(filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+       (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return orderBy(query).ToList();
+            }
+            else
+            {
+                return query.ToList();
+            }
         }
 
         public T GetById(int id)
         {
-            throw new NotImplementedException();
+            return DatabaseSet.Find(id);
         }
 
         public void Update(T entity)
         {
-            throw new NotImplementedException();
+            DatabaseSet.Attach(entity);
+            Context.Entry(entity).State = EntityState.Modified;
         }
     }
 }
