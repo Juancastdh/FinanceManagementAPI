@@ -20,6 +20,7 @@ builder.Services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDat
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICategoriesManager, CategoriesManager>();
 builder.Services.AddScoped<IPeriodsManager, PeriodsManager>();
+builder.Services.AddScoped<IFinancialTransactionsManager, FinancialTransactionsManager>();
 
 var app = builder.Build();
 

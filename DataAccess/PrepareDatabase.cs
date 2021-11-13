@@ -45,6 +45,42 @@ namespace FinanceManagement.DataAccess
                 }
             };
 
+            IEnumerable<FinancialTransaction> financialTransactionsToAdd = new List<FinancialTransaction>
+            {
+                new FinancialTransaction
+                {
+                    Id = 1,
+                    Date = DateTime.Now,
+                    Description = "GPU",
+                    IsExpense = true,
+                    CategoryId = 1,
+                    PeriodId = 1,
+                    Value = 30000
+                },
+                new FinancialTransaction
+                {
+                    Id = 2,
+                    Date = DateTime.Now,
+                    Description = "Wendys",
+                    IsExpense = true,
+                    CategoryId = 2,
+                    PeriodId = 1,
+                    Value = 575
+                },
+                new FinancialTransaction
+                {
+                    Id = 3,
+                    Date = DateTime.Now,
+                    Description = "Initial Income PC",
+                    IsExpense = false,
+                    CategoryId = 1,
+                    PeriodId = 1,
+                    Value = 10000
+                }
+            };
+
+
+
             using(var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
                 using( var context = serviceScope.ServiceProvider.GetService<DatabaseContext>())
@@ -57,6 +93,11 @@ namespace FinanceManagement.DataAccess
                     if (!context.Periods.Any())
                     {
                         context.Periods.AddRange(periodsToAdd);
+                    }
+
+                    if (!context.FinancialTransactions.Any())
+                    {
+                        context.FinancialTransactions.AddRange(financialTransactionsToAdd);
                     }
 
                     context.SaveChanges();
