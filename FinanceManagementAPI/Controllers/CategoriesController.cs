@@ -5,8 +5,6 @@ using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace FinanceManagement.API.Controllers
 {
     [Route("api/[controller]")]

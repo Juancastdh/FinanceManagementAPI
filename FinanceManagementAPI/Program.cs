@@ -19,6 +19,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase("testDb"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICategoriesManager, CategoriesManager>();
+builder.Services.AddScoped<IPeriodsManager, PeriodsManager>();
 
 var app = builder.Build();
 

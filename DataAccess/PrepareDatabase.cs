@@ -29,15 +29,37 @@ namespace FinanceManagement.DataAccess
                 }
             };
 
+            IEnumerable<Period> periodsToAdd = new List<Period>
+            {
+                new Period
+                {
+                    Id = 1,
+                    StartDate = DateTime.Now,
+                    EndDate = DateTime.Now.AddDays(13)
+                },
+                new Period
+                {
+                    Id = 2,
+                    StartDate = DateTime.Now.AddDays(13),
+                    EndDate = DateTime.Now.AddDays(26)
+                }
+            };
+
             using(var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
                 using( var context = serviceScope.ServiceProvider.GetService<DatabaseContext>())
                 {
                     if (!context.Categories.Any())
                     {
-                        context.Categories.AddRange(categoriesToAdd);
-                        context.SaveChanges();
+                        context.Categories.AddRange(categoriesToAdd);                       
                     }
+
+                    if (!context.Periods.Any())
+                    {
+                        context.Periods.AddRange(periodsToAdd);
+                    }
+
+                    context.SaveChanges();
                 }
             }
         }
