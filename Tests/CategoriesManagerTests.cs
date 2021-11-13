@@ -49,23 +49,23 @@ namespace FinanceManagement.Tests
         public void GetAllCategories_Returns_All_Categories_From_Repository()
         {
             //Setup
-            List<Category> mockCategoryDatabase = new List<Category>();
-            Mock<IRepository<Category>> MockCategoryRepository = new Mock<IRepository<Category>>();
-            MockCategoryRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockCategoryDatabase);
-            Mock<IUnitOfWork> MockUnitOfWork = new Mock<IUnitOfWork>();
-            MockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(MockCategoryRepository.Object);
-            ICategoriesManager categoriesManager = new CategoriesManager(MockUnitOfWork.Object);
+            List<Category> mockCategoriesDatabase = new List<Category>();
+            Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
+            mockCategoriesRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockCategoriesDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
 
             //Arrange
-            mockCategoryDatabase.Add(new Category
+            mockCategoriesDatabase.Add(new Category
             {
                 Id = 1,
                 Name = "TestCategory1",
                 FinancialTransactions = new List<FinancialTransaction>(),
                 Percentage = 5
             });
-            mockCategoryDatabase.Add(new Category
+            mockCategoriesDatabase.Add(new Category
             {
                 Id = 2,
                 Name = "TestCategory2",
@@ -78,7 +78,7 @@ namespace FinanceManagement.Tests
             IEnumerable<Category> returnedCategories = categoriesManager.GetAllCategories();
 
             //Assert
-            Assert.Equal(returnedCategories, mockCategoryDatabase);
+            Assert.Equal(returnedCategories, mockCategoriesDatabase);
 
 
 

@@ -74,14 +74,16 @@ namespace FinanceManagement.Tests
             {
                 Id = 1,
                 Description = "Transaction that should remain in the repository",
-                IsExpense = true
+                IsExpense = true,
+                Value = 1000
             };
 
             FinancialTransaction transactionToBeDeleted = new FinancialTransaction
             {
                 Id = 2,
                 Description = "Transaction that should be removed from the repository",
-                IsExpense = false
+                IsExpense = false,
+                Value = 2500
             };
 
             mockFinancialTransactionsDatabase.Add(transactionToRemain);
@@ -102,6 +104,41 @@ namespace FinanceManagement.Tests
             //Assert
             Assert.Equal(orderedMockFinancialTransactionsDatabase, expectedFinancialTransactionsDatabase);
 
+        }
+
+        [Fact]
+        public void GetAllFinancialTransactions_Returns_All_Transactions_From_Repository()
+        {
+            //Setup
+            List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockFinancialTransactionsDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+
+            //Arrange
+            mockFinancialTransactionsDatabase.Add(new FinancialTransaction
+            {
+                Id = 1,
+                Description = "Test Transaction 1",
+                IsExpense = true,
+                Value = 1000
+            });
+            mockFinancialTransactionsDatabase.Add(new FinancialTransaction
+            {
+                Id = 2,
+                Description = "Test Transaction 2",
+                IsExpense = false,
+                Value = 2500
+            });
+
+            //Act
+            IEnumerable<FinancialTransaction> returnedFinancialTransactions = financialTransactionsManager.GetAllFinancialTransactions();
+
+            //Assert
+            Assert.Equal(returnedFinancialTransactions, mockFinancialTransactionsDatabase);
         }
 
     }

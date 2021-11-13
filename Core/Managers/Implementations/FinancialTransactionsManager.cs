@@ -37,7 +37,8 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         public IEnumerable<FinancialTransaction> GetAllFinancialTransactions()
         {
-            throw new NotImplementedException();
+            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+            return financialTransactionsRepository.GetAll();
         }
 
         public FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null)
