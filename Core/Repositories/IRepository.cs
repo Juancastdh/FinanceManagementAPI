@@ -14,5 +14,7 @@ namespace FinanceManagement.Core.Repositories
         void Add(T entity);
         void Update(T entity);
         void DeleteById(int id);
+        void AddMany(IEnumerable<T> entities);
+        void DeleteMany(IEnumerable<T> entities);
     }
 }

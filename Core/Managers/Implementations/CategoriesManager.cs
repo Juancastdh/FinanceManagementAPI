@@ -113,5 +113,39 @@ namespace FinanceManagement.Core.Managers.Implementations
                 throw;
             }
         }
+
+        public void AddMany(IEnumerable<Category> categories)
+        {
+            try
+            {
+                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
+
+                categoriesRepository.AddMany(categories);
+
+                UnitOfWork.SaveChanges();
+            }
+            catch(Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+        }
+
+        public void DeleteMany(IEnumerable<Category> categories)
+        {
+            try
+            {
+                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
+
+                categoriesRepository.DeleteMany(categories);
+
+                UnitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+        }
     }
 }
