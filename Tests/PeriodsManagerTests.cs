@@ -153,5 +153,56 @@ namespace FinanceManagement.Tests
             //Assert
             Assert.Equal(updatedPeriodString, obtainedUpdatedPeriodString);
         }
+
+        [Fact]
+        public void DeletePeriodById_Removes_Periods_Correctly_From_Repository()
+        {
+
+            //Setup
+            List<Period> mockPeriodsDatabase = new List<Period>();
+            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
+            mockPeriodsRepository.Setup(repository => repository.DeleteById(It.IsAny<int>())).Callback((int periodId) => {
+                Period periodToDelete = mockPeriodsDatabase.Find(period => period.Id == periodId);
+                mockPeriodsDatabase.Remove(periodToDelete);
+            });
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
+            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+
+            //Arrange
+            Period periodToRemain = new Period
+            {
+                Id = 1,
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddDays(13)
+            };
+
+            Period periodToBeDeleted = new Period
+            {
+                Id = 2,
+                StartDate = DateTime.Now.AddDays(13),
+                EndDate = DateTime.Now.AddDays(26)
+            };
+
+            mockPeriodsDatabase.Add(periodToRemain);
+            mockPeriodsDatabase.Add(periodToBeDeleted);
+
+            IEnumerable<Period> orderedMockPeriodsDatabase = mockPeriodsDatabase.OrderBy(x => x.Id);
+
+            IEnumerable<Period> expectedPeriodsDatabase = new List<Period>
+            {
+                periodToRemain
+            };
+
+            expectedPeriodsDatabase = expectedPeriodsDatabase.OrderBy(x => x.Id);
+
+            //Act
+            periodsManager.DeletePeriodById(periodToBeDeleted.Id);
+
+            //Assert
+            Assert.Equal(expectedPeriodsDatabase, orderedMockPeriodsDatabase);
+
+        }
     }
 }

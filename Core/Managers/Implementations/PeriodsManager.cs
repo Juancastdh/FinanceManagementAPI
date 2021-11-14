@@ -39,6 +39,23 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         }
 
+        public void DeletePeriodById(int id)
+        {
+            try
+            {
+                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+
+                periodsRepository.DeleteById(id);
+
+                UnitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+        }
+
         public IEnumerable<Period> GetAllPeriods()
         {
             try

@@ -64,5 +64,13 @@ namespace FinanceManagement.API.Controllers
             return Ok();
         }
 
+        [HttpDelete("{id}")]
+        public IActionResult DeletePeriodById(int id)
+        {
+            PeriodsManager.DeletePeriodById(id);
+
+            return Ok();
+        }
+
     }
 }
