@@ -1,5 +1,4 @@
 ﻿using FinanceManagement.Core.Entities;
-using FinanceManagement.Core.Managers;
 using FinanceManagement.Core.Managers.Implementations;
 using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
@@ -8,7 +7,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text.Json;
 using Xunit;
 
@@ -273,6 +271,43 @@ namespace FinanceManagement.Tests
 
             //Assert
             Assert.Equal(updatedFinancialTransactionString, obtainedUpdatedFinancialTransactionString);
+        }
+
+
+        [Fact]
+        public void GetFinancialTransactionById_Returns_Correct_FinancialTransaction_From_Repository()
+        {
+            //Setup and arrange       
+            FinancialTransaction expectedFinancialTransaction = new FinancialTransaction
+            {
+                Id = 5,
+                Date = DateTime.Now,
+                Description = "Expected Financial Transaction",
+                IsExpense = true,
+                Value = 500,
+                CategoryId = 1,
+                Category = new Category
+                {
+                    Id = 1,
+                    Name = "TestCategory",
+                    Percentage = 5
+                }
+            };
+            string expectedFinancialTransactionString = JsonSerializer.Serialize(expectedFinancialTransaction);
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetById(5)).Returns(expectedFinancialTransaction);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            Mock<ILogger<FinancialTransactionsManager>> mockLogger = new Mock<ILogger<FinancialTransactionsManager>>();
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object, mockLogger.Object);
+
+            //Act
+            FinancialTransaction obtainedFinancialTransaction = financialTransactionsManager.GetFinancialTransactionById(5);
+            string obtainedFinancialTransactionString = JsonSerializer.Serialize(obtainedFinancialTransaction);
+
+            //Assert
+            Assert.Equal(expectedFinancialTransactionString, obtainedFinancialTransactionString);
+
         }
 
 
