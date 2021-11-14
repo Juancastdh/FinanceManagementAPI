@@ -82,5 +82,25 @@ namespace FinanceManagement.API.Controllers
             return Ok(financialTransactionReadDto);
 
         }
+
+        [HttpPost("Many")]
+        public IActionResult CreateFinancialTransactions([FromBody] IEnumerable<FinancialTransactionReadDto> financialTransactions)
+        {
+            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions);
+
+            FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
+
+            return Ok();
+        }
+
+        [HttpDelete("Many")]
+        public IActionResult DeleteFinancialTransactions([FromBody] IEnumerable<FinancialTransactionReadDto> financialTransactions)
+        {
+            IEnumerable<FinancialTransaction> financialTransactionsToBeDeleted = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions);
+
+            FinancialTransactionsManager.DeleteFinancialTransactions(financialTransactionsToBeDeleted);
+
+            return Ok();
+        }
     }
 }
