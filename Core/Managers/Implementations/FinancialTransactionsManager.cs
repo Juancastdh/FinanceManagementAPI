@@ -42,7 +42,7 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         }
 
-        public void AddFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions)
+        public void AddMany(IEnumerable<FinancialTransaction> financialTransactions)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         }
 
-        public void DeleteFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions)
+        public void DeleteMany(IEnumerable<FinancialTransaction> financialTransactions)
         {
             try
             {

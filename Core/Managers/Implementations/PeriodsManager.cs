@@ -20,7 +20,7 @@ namespace FinanceManagement.Core.Managers.Implementations
             Logger = logger;
         }
 
-        public void AddPeriods(IEnumerable<Period> periods)
+        public void AddMany(IEnumerable<Period> periods)
         {
             try
             {
@@ -56,7 +56,7 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         }
 
-        public void DeletePeriods(IEnumerable<Period> periods)
+        public void DeleteMany(IEnumerable<Period> periods)
         {
             try
             {

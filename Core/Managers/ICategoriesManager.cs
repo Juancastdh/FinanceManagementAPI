@@ -12,7 +12,7 @@ namespace FinanceManagement.Core.Managers
         Category GetCategoryById(int id);
         void UpdateCategory(Category category);
         void DeleteCategoryById(int id);
-        void AddCategories(IEnumerable<Category> categories);
-        void DeleteCategories(IEnumerable<Category> categories);
+        void AddMany(IEnumerable<Category> categories);
+        void DeleteMany(IEnumerable<Category> categories);
     }
 }

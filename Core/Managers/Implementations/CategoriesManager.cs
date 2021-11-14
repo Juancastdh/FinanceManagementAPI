@@ -114,7 +114,7 @@ namespace FinanceManagement.Core.Managers.Implementations
             }
         }
 
-        public void AddCategories(IEnumerable<Category> categories)
+        public void AddMany(IEnumerable<Category> categories)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace FinanceManagement.Core.Managers.Implementations
             }
         }
 
-        public void DeleteCategories(IEnumerable<Category> categories)
+        public void DeleteMany(IEnumerable<Category> categories)
         {
             try
             {

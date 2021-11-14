@@ -72,25 +72,5 @@ namespace FinanceManagement.API.Controllers
             return Ok();
         }
 
-        [HttpPost("Many")]
-        public IActionResult CreatePeriods([FromBody] IEnumerable<PeriodReadDto> periods)
-        {
-            IEnumerable<Period> periodsToCreate = Mapper.Map<IEnumerable<Period>>(periods);
-
-            PeriodsManager.AddPeriods(periodsToCreate);
-
-            return Ok();
-        }
-
-        [HttpDelete("Many")]
-        public IActionResult DeletePeriods([FromBody] IEnumerable<PeriodReadDto> periods)
-        {
-            IEnumerable<Period> periodsToDelete = Mapper.Map<IEnumerable<Period>>(periods);
-
-            PeriodsManager.DeletePeriods(periodsToDelete);
-
-            return Ok();
-        }
-
     }
 }

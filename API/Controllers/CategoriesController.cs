@@ -71,26 +71,5 @@ namespace FinanceManagement.API.Controllers
 
             return Ok();
         }
-
-        [HttpPost("Many")]
-        public IActionResult CreateCategories([FromBody] IEnumerable<CategoryReadDto> categories)
-        {
-            IEnumerable<Category> categoriesToCreate = Mapper.Map<IEnumerable<Category>>(categories);
-
-            CategoriesManager.AddCategories(categoriesToCreate);
-
-            return Ok();
-        }
-
-        [HttpDelete("Many")]
-        public IActionResult DeleteCategories(IEnumerable<CategoryReadDto> categories)
-        {
-
-            IEnumerable<Category> categoriesToDelete = Mapper.Map<IEnumerable<Category>>(categories);
-
-            CategoriesManager.DeleteCategories(categoriesToDelete);
-
-            return Ok();
-        }
     }
 }
