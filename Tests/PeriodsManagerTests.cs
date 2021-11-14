@@ -83,5 +83,75 @@ namespace FinanceManagement.Tests
             Assert.Equal(mockPeriodsDatabase, returnedPeriods);
 
         }
+
+        [Fact]
+        public void GetPeriodById_Returns_Correct_Period_From_Repository()
+        {
+            //Setup and arrange       
+            Period expectedPeriod = new Period
+            {
+                Id = 5,
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddDays(13)
+            };
+            string expectedPeriodString = JsonSerializer.Serialize(expectedPeriod);
+            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
+            mockPeriodsRepository.Setup(repository => repository.GetById(5)).Returns(expectedPeriod);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
+            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+
+            //Act
+            Period obtainedPeriod = periodsManager.GetPeriodById(5);
+            string obtainedPeriodString = JsonSerializer.Serialize(obtainedPeriod);
+
+            //Assert
+            Assert.Equal(expectedPeriodString, obtainedPeriodString);
+
+        }
+
+
+        [Fact]
+        public void UpdatePeriod_Updates_Periods_Correctly_To_Repository()
+        {
+            //Setup
+            List<Period> mockPeriodsDatabase = new List<Period>();
+            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
+            mockPeriodsRepository.Setup(repository => repository.Update(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase[0] = period);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
+            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+
+            //Arrange
+
+            Period originalPeriod = new Period
+            {
+                Id = 1,
+                StartDate = DateTime.Now,
+                EndDate = DateTime.Now.AddDays(13)
+            };
+
+            mockPeriodsDatabase.Add(originalPeriod);
+
+            Period updatedPeriod = new Period
+            {
+                Id = 1,
+                StartDate = DateTime.Now.AddDays(13),
+                EndDate = DateTime.Now.AddDays(26)
+            };
+
+            string updatedPeriodString = JsonSerializer.Serialize(updatedPeriod);
+
+            //Act
+            periodsManager.UpdatePeriod(updatedPeriod);
+            Period obtainedUpdatedPeriod = mockPeriodsDatabase.Single();
+
+            string obtainedUpdatedPeriodString = JsonSerializer.Serialize(obtainedUpdatedPeriod);
+
+            //Assert
+            Assert.Equal(updatedPeriodString, obtainedUpdatedPeriodString);
+        }
     }
 }
