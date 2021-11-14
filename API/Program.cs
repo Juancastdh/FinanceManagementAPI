@@ -1,4 +1,5 @@
 using AutoMapper;
+using FinanceManagement.API.Helpers;
 using FinanceManagement.Core.Managers;
 using FinanceManagement.Core.Managers.Implementations;
 using FinanceManagement.Core.UnitOfWork;
@@ -10,6 +11,8 @@ using Microsoft.EntityFrameworkCore.InMemory;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -31,12 +34,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware(typeof(ExceptionHandler));
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-//PrepareDatabase.Seed(app);
 
 app.Run();
