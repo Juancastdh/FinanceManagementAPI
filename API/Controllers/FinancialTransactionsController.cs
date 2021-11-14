@@ -38,7 +38,9 @@ namespace FinanceManagement.API.Controllers
 
             FinancialTransactionsManager.AddFinancialTransaction(financialTransactionToBeCreated);
 
-            return Ok();
+            FinancialTransactionReadDto financialTransactionReadDto = Mapper.Map<FinancialTransactionReadDto>(financialTransactionToBeCreated);
+
+            return CreatedAtRoute("GetFinancialTransactionById", new {id = financialTransactionReadDto.Id}, financialTransactionReadDto);
         }
 
         [HttpPut]
@@ -67,6 +69,17 @@ namespace FinanceManagement.API.Controllers
             FinancialReportReadDto financialReportReadDto = Mapper.Map<FinancialReportReadDto>(financialReport);
 
             return Ok(financialReportReadDto);
+
+        }
+
+        [HttpGet("{id}", Name = "GetFinancialTransactionById")]
+        public IActionResult GetFinancialTransactionById(int id)
+        {
+            FinancialTransaction financialTransaction = FinancialTransactionsManager.GetFinancialTransactionById(id);
+
+            FinancialTransactionReadDto financialTransactionReadDto = Mapper.Map<FinancialTransactionReadDto>(financialTransaction);
+
+            return Ok(financialTransactionReadDto);
 
         }
     }
