@@ -12,7 +12,5 @@ namespace FinanceManagement.Core.Managers
         Period GetPeriodById(int id);
         void UpdatePeriod(Period period);
         void DeletePeriodById(int id);
-        void AddMany(IEnumerable<Period> periods);
-        void DeleteMany(IEnumerable<Period> periods);
     }
 }

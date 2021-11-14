@@ -77,23 +77,5 @@ namespace FinanceManagement.Services
             DatabaseSet.Attach(entity);
             Context.Entry(entity).State = EntityState.Modified;
         }
-
-        public void AddMany(IEnumerable<T> entities)
-        {
-            DatabaseSet.AddRange(entities);
-        }
-
-        public void DeleteMany(IEnumerable<T> entities)
-        {
-            foreach(var entity in entities)
-            {
-                if (Context.Entry(entity).State == EntityState.Detached)
-                {
-                    DatabaseSet.Attach(entity);
-                }
-            }
-
-            DatabaseSet.RemoveRange(entities);
-        }
     }
 }

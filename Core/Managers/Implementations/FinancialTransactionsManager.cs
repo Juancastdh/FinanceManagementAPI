@@ -42,23 +42,6 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         }
 
-        public void AddMany(IEnumerable<FinancialTransaction> financialTransactions)
-        {
-            try
-            {
-                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-
-                financialTransactionsRepository.AddMany(financialTransactions);
-
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
-        }
-
         public void DeleteFinancialTransactionById(int id)
         {
 
@@ -76,23 +59,6 @@ namespace FinanceManagement.Core.Managers.Implementations
                 throw;
             }
 
-        }
-
-        public void DeleteMany(IEnumerable<FinancialTransaction> financialTransactions)
-        {
-            try
-            {
-                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-
-                financialTransactionsRepository.DeleteMany(financialTransactions);
-
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
         }
 
         public IEnumerable<FinancialTransaction> GetAllFinancialTransactions()

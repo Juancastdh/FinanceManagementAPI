@@ -20,23 +20,6 @@ namespace FinanceManagement.Core.Managers.Implementations
             Logger = logger;
         }
 
-        public void AddMany(IEnumerable<Period> periods)
-        {
-            try
-            {
-                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
-
-                periodsRepository.AddMany(periods);
-
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
-        }
-
         public void AddPeriod(Period period)
         {
 
@@ -54,23 +37,6 @@ namespace FinanceManagement.Core.Managers.Implementations
                 throw;
             }
 
-        }
-
-        public void DeleteMany(IEnumerable<Period> periods)
-        {
-            try
-            {
-                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
-
-                periodsRepository.DeleteMany(periods);
-
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
         }
 
         public void DeletePeriodById(int id)
