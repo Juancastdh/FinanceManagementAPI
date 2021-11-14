@@ -63,5 +63,13 @@ namespace FinanceManagement.API.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCategoryById(int id)
+        {
+            CategoriesManager.DeleteCategoryById(id);
+
+            return Ok();
+        }
     }
 }

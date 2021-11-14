@@ -97,6 +97,21 @@ namespace FinanceManagement.Core.Managers.Implementations
             }
         }
 
+        public void DeleteCategoryById(int id)
+        {
+            try
+            {
+                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
+                categoriesRepository.DeleteById(id);
+
+                UnitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+        }
     }
 }
