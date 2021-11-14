@@ -1,4 +1,5 @@
 ﻿using FinanceManagement.Core.Entities;
+using FinanceManagement.Core.Exceptions;
 using FinanceManagement.Core.Models;
 using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
@@ -102,6 +103,29 @@ namespace FinanceManagement.Core.Managers.Implementations
             }
 
 
+        }
+
+        public FinancialTransaction GetFinancialTransactionById(int id)
+        {
+            FinancialTransaction? financialTransaction;
+
+            try
+            {
+                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+                financialTransaction = financialTransactionsRepository.GetById(id);
+            }
+            catch(Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+
+            if(financialTransaction == null)
+            {
+                throw new DataNotFoundException();
+            }
+
+            return financialTransaction;
         }
 
         public decimal GetSumOfFinancialTransactionValues(IEnumerable<FinancialTransaction> financialTransactions)

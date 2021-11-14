@@ -8,6 +8,8 @@ namespace FinanceManagement.Core.Managers
     public interface IPeriodsManager
     {
         void AddPeriod(Period period);
-        IEnumerable<Period> GetPeriods();
+        IEnumerable<Period> GetAllPeriods();
+        Period GetPeriodById(int id);
+        void UpdatePeriod(Period period);
     }
 }

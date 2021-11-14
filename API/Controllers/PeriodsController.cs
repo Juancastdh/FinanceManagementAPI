@@ -24,7 +24,7 @@ namespace FinanceManagement.API.Controllers
         [HttpGet]
         public IActionResult GetAllPeriods()
         {
-            IEnumerable<Period> periods = PeriodsManager.GetPeriods();
+            IEnumerable<Period> periods = PeriodsManager.GetAllPeriods();
 
             IEnumerable<PeriodReadDto> periodReadDtos = Mapper.Map < IEnumerable<PeriodReadDto>>(periods);
 

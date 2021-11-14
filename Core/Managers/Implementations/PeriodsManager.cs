@@ -1,4 +1,5 @@
 ﻿using FinanceManagement.Core.Entities;
+using FinanceManagement.Core.Exceptions;
 using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,7 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         }
 
-        public IEnumerable<Period> GetPeriods()
+        public IEnumerable<Period> GetAllPeriods()
         {
             try
             {
@@ -47,6 +48,45 @@ namespace FinanceManagement.Core.Managers.Implementations
                 IEnumerable<Period> periods = periodsRepository.GetAll();
 
                 return periods;
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+        }
+
+        public Period GetPeriodById(int id)
+        {
+            Period? period;
+
+            try
+            {
+                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+                period = periodsRepository.GetById(id);
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+
+            if(period == null)
+            {
+                throw new DataNotFoundException();
+            }
+
+            return period;
+
+        }
+
+        public void UpdatePeriod(Period period)
+        {
+            try
+            {
+                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+                periodsRepository.Update(period);
+                UnitOfWork.SaveChanges();
             }
             catch (Exception exception)
             {

@@ -3,6 +3,7 @@ using FinanceManagement.Core.Managers;
 using FinanceManagement.Core.Managers.Implementations;
 using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,8 @@ namespace FinanceManagement.Tests
             mockPeriodsRepository.Setup(repository => repository.Add(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase.Add(period));
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
+            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
 
             //Arrange
             Period expectedPeriod = new Period
@@ -55,7 +57,8 @@ namespace FinanceManagement.Tests
             mockPeriodsRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockPeriodsDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
+            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
 
 
             //Arrange
@@ -74,7 +77,7 @@ namespace FinanceManagement.Tests
             );
 
             //Act
-            IEnumerable<Period> returnedPeriods = periodsManager.GetPeriods();
+            IEnumerable<Period> returnedPeriods = periodsManager.GetAllPeriods();
 
             //Assert
             Assert.Equal(mockPeriodsDatabase, returnedPeriods);
