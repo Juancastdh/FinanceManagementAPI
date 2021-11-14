@@ -2,6 +2,7 @@
 using FinanceManagement.Core.Models;
 using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,79 +14,136 @@ namespace FinanceManagement.Core.Managers.Implementations
     {
 
         private readonly IUnitOfWork UnitOfWork;
+        private readonly ILogger<FinancialTransactionsManager> Logger;
 
-        public FinancialTransactionsManager(IUnitOfWork unitOfWork)
+        public FinancialTransactionsManager(IUnitOfWork unitOfWork, ILogger<FinancialTransactionsManager> logger)
         {
             UnitOfWork = unitOfWork;
+            Logger = logger;
         }
 
 
         public void AddFinancialTransaction(FinancialTransaction financialTransaction)
         {
-            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+            try
+            {
+                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
 
-            financialTransactionsRepository.Add(financialTransaction);
+                financialTransactionsRepository.Add(financialTransaction);
 
-            UnitOfWork.SaveChanges();
+                UnitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+
         }
 
         public void DeleteFinancialTransactionById(int id)
         {
 
-            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+            try
+            {
+                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
 
-            financialTransactionsRepository.DeleteById(id);
+                financialTransactionsRepository.DeleteById(id);
 
-            UnitOfWork.SaveChanges();
+                UnitOfWork.SaveChanges();
+            }
+            catch(Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+
         }
 
         public IEnumerable<FinancialTransaction> GetAllFinancialTransactions()
         {
-            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-            return financialTransactionsRepository.GetAll();
+            try
+            {
+                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+                return financialTransactionsRepository.GetAll();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+
         }
 
         public FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null)
         {
-            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-            IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense));
 
-            financialTransactions = financialTransactions.OrderBy(transaction => transaction.Date);
-
-            decimal sumOfFinancialTransactionsValue = GetSumOfFinancialTransactionValues(financialTransactions);
-
-            FinancialReport financialReport = new FinancialReport
+            try
             {
-                FinancialTransactions = financialTransactions,
-                TotalValue = sumOfFinancialTransactionsValue
-            };
+                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+                IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense));
 
-            return financialReport;
+                financialTransactions = financialTransactions.OrderBy(transaction => transaction.Date);
+
+                decimal sumOfFinancialTransactionsValue = GetSumOfFinancialTransactionValues(financialTransactions);
+
+                FinancialReport financialReport = new FinancialReport
+                {
+                    FinancialTransactions = financialTransactions,
+                    TotalValue = sumOfFinancialTransactionsValue
+                };
+
+                return financialReport;
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+
 
         }
 
         public decimal GetSumOfFinancialTransactionValues(IEnumerable<FinancialTransaction> financialTransactions)
         {
-            IEnumerable<FinancialTransaction> incomeTransactions = financialTransactions.Where(f => f.IsExpense == false);
 
-            IEnumerable<FinancialTransaction> expenseTransactions = financialTransactions.Where(f => f.IsExpense == true);
+            try
+            {
+                IEnumerable<FinancialTransaction> incomeTransactions = financialTransactions.Where(f => f.IsExpense == false);
 
-            decimal sumOfIncomeTransactionValues = incomeTransactions.Sum(f => f.Value);
+                IEnumerable<FinancialTransaction> expenseTransactions = financialTransactions.Where(f => f.IsExpense == true);
 
-            decimal sumOfExpenseTransactionValues = expenseTransactions.Sum(f => f.Value);
+                decimal sumOfIncomeTransactionValues = incomeTransactions.Sum(f => f.Value);
 
-            decimal sumOfFinancialTransactionValues = sumOfIncomeTransactionValues - sumOfExpenseTransactionValues;
+                decimal sumOfExpenseTransactionValues = expenseTransactions.Sum(f => f.Value);
 
-            return sumOfFinancialTransactionValues;
+                decimal sumOfFinancialTransactionValues = sumOfIncomeTransactionValues - sumOfExpenseTransactionValues;
+
+                return sumOfFinancialTransactionValues;
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
+
         }
 
         public void UpdateFinancialTransaction(FinancialTransaction financialTransaction)
         {
-            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+            try
+            {
+                IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
 
-            financialTransactionsRepository.Update(financialTransaction);
+                financialTransactionsRepository.Update(financialTransaction);
 
-            UnitOfWork.SaveChanges();
+                UnitOfWork.SaveChanges();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError(exception.Message, exception);
+                throw;
+            }
         }
     }
 }
