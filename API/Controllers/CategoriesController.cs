@@ -37,6 +37,30 @@ namespace FinanceManagement.API.Controllers
 
             CategoriesManager.AddCategory(categoryToCreate);
 
+            CategoryReadDto categoryReadDto = Mapper.Map<CategoryReadDto>(categoryToCreate);
+
+            return CreatedAtRoute("GetCategoryById", new { id = categoryReadDto.Id }, categoryReadDto);
+            
+        }
+
+        [HttpGet("{id}", Name = "GetCategoryById")]
+        public IActionResult GetCategoryById(int id)
+        {
+            Category category = CategoriesManager.GetCategoryById(id);
+            
+            CategoryReadDto categoryReadDto = Mapper.Map<CategoryReadDto>(category);
+
+            return Ok(categoryReadDto);
+
+        }
+
+        [HttpPut]
+        public IActionResult UpdateCategory([FromBody] CategoryReadDto category)
+        {
+            Category categoryToBeUpdated = Mapper.Map<Category>(category);
+
+            CategoriesManager.UpdateCategory(categoryToBeUpdated);
+
             return Ok();
         }
     }

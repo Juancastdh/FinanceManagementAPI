@@ -11,6 +11,7 @@ namespace FinanceManagement.API.MapperProfiles
         {
             CreateMap<Category, CategoryReadDto>();
             CreateMap<CategoryCreateDto, Category>();
+            CreateMap<CategoryReadDto, Category>();
         }        
     }
 }
