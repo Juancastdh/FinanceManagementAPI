@@ -38,6 +38,29 @@ namespace FinanceManagement.API.Controllers
 
             PeriodsManager.AddPeriod(periodToCreate);
 
+            PeriodReadDto periodReadDto = Mapper.Map<PeriodReadDto>(periodToCreate);
+
+            return CreatedAtRoute("GetPeriodById", new {id = periodReadDto.Id}, periodReadDto);
+        }
+
+        [HttpGet("{id}", Name = "GetPeriodById")]
+        public IActionResult GetPeriodById(int id)
+        {
+            Period period = PeriodsManager.GetPeriodById(id);
+
+            PeriodReadDto periodReadDto = Mapper.Map<PeriodReadDto>(period);
+
+            return Ok(periodReadDto);
+
+        }
+
+        [HttpPut]
+        public IActionResult UpdatePeriod([FromBody] PeriodReadDto period)
+        {
+            Period periodToBeUpdated = Mapper.Map<Period>(period);
+
+            PeriodsManager.UpdatePeriod(periodToBeUpdated);
+
             return Ok();
         }
 

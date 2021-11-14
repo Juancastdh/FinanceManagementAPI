@@ -10,6 +10,7 @@ namespace FinanceManagement.API.MapperProfiles
         {
             CreateMap<Period, PeriodReadDto>();
             CreateMap<PeriodCreateDto, Period>();
+            CreateMap<PeriodReadDto, Period>();
         }
     }
 }
