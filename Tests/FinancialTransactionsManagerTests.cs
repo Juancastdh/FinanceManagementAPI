@@ -216,7 +216,7 @@ namespace FinanceManagement.Tests
 
 
         [Fact]
-        public void UpdateFinancialTransaction_Update_FinancialTransactions_Correctly_To_Repository()
+        public void UpdateFinancialTransaction_Updates_FinancialTransactions_Correctly_To_Repository()
         {
             //Setup
             List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();

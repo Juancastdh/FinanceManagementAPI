@@ -51,8 +51,8 @@ namespace FinanceManagement.Tests
         [Fact]
         public void GetAllCategories_Returns_All_Categories_From_Repository()
         {
-            //Setup
-            List<Category> mockCategoriesDatabase = new List<Category>();
+            //Setup and arrange
+            IEnumerable<Category> mockCategoriesDatabase = GenerateCategoriesRepository();
             Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
             mockCategoriesRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockCategoriesDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -60,32 +60,106 @@ namespace FinanceManagement.Tests
             Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
             CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
 
-
-            //Arrange
-            mockCategoriesDatabase.Add(new Category
-            {
-                Id = 1,
-                Name = "TestCategory1",
-                FinancialTransactions = new List<FinancialTransaction>(),
-                Percentage = 5
-            });
-            mockCategoriesDatabase.Add(new Category
-            {
-                Id = 2,
-                Name = "TestCategory2",
-                FinancialTransactions = new List<FinancialTransaction>(),
-                Percentage = 10
-                }
-            );
-
             //Act
             IEnumerable<Category> returnedCategories = categoriesManager.GetAllCategories();
 
             //Assert
             Assert.Equal(mockCategoriesDatabase, returnedCategories);
+        }
 
 
+        [Fact]
+        public void GetCategoryById_Returns_Correct_Category_From_Repository()
+        {
+            //Setup and arrange       
+            Category expectedCategory = new Category
+            {
+                Id = 5,
+                Name = "Expected Category",
+                Percentage = 15
+            };      
+            string expectedCategoryString = JsonSerializer.Serialize(expectedCategory);
+            Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
+            mockCategoriesRepository.Setup(repository => repository.GetById(5)).Returns(expectedCategory);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
+            Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
 
+            //Act
+            Category obtainedCategory = categoriesManager.GetCategoryById(5);
+            string obtainedCategoryString = JsonSerializer.Serialize(obtainedCategory);
+
+            //Assert
+            Assert.Equal(expectedCategoryString, obtainedCategoryString);
+
+        }
+
+
+        [Fact]
+        public void UpdateCategory_Updates_Categories_Correctly_To_Repository()
+        {
+            //Setup
+            List<Category> mockCategoriesDatabase = new List<Category>();
+            Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
+            mockCategoriesRepository.Setup(repository => repository.Update(It.IsAny<Category>())).Callback((Category category) => mockCategoriesDatabase[0] = category);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
+            Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
+
+            //Arrange
+
+            Category originalCategory = new Category
+            {
+                Id = 1,
+                Name = "Original category",
+                Percentage = 15
+            };
+
+            mockCategoriesDatabase.Add(originalCategory);
+
+            Category updatedCategory = new Category
+            {
+                Id = 1,
+                Name = "Updated category",
+                Percentage = 20
+            };
+
+            string updatedCategoryString = JsonSerializer.Serialize(updatedCategory);
+
+            //Act
+            categoriesManager.UpdateCategory(updatedCategory);
+            Category obtainedUpdatedCategory = mockCategoriesDatabase.Single();
+
+            string obtainedUpdatedCategoryString = JsonSerializer.Serialize(obtainedUpdatedCategory);
+
+            //Assert
+            Assert.Equal(updatedCategoryString, obtainedUpdatedCategoryString);
+        }
+
+        private IEnumerable<Category> GenerateCategoriesRepository()
+        {
+            List<Category> categoriesRepository = new List<Category>
+            {
+                new Category
+                {
+                    Id = 1,
+                    Name = "TestCategory1",
+                    FinancialTransactions = new List<FinancialTransaction>(),
+                    Percentage = 5
+                },
+                new Category
+                {
+                    Id = 2,
+                    Name = "TestCategory2",
+                    FinancialTransactions = new List<FinancialTransaction>(),
+                    Percentage = 10
+                }
+            };
+
+            return categoriesRepository;
+            
         }
     }
 }
