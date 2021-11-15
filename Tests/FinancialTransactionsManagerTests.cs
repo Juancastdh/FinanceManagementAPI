@@ -24,8 +24,7 @@ namespace FinanceManagement.Tests
             mockFinancialTransactionsRepository.Setup(repository => repository.Add(It.IsAny<FinancialTransaction>())).Callback((FinancialTransaction financialTransaction) => mockFinancialTransactionsDatabase.Add(financialTransaction));
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
-            Mock<ILogger<FinancialTransactionsManager>> mockLogger = new Mock<ILogger<FinancialTransactionsManager>>();
-            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object, mockLogger.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
 
             //Arrange
             FinancialTransaction expectedFinancialTransaction = new FinancialTransaction
@@ -68,8 +67,7 @@ namespace FinanceManagement.Tests
             });
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
-            Mock<ILogger<FinancialTransactionsManager>> mockLogger = new Mock<ILogger<FinancialTransactionsManager>>();
-            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object, mockLogger.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
 
             //Arrange
             FinancialTransaction transactionToRemain = new FinancialTransaction
@@ -117,8 +115,7 @@ namespace FinanceManagement.Tests
             mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockFinancialTransactionsDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
-            Mock<ILogger<FinancialTransactionsManager>> mockLogger = new Mock<ILogger<FinancialTransactionsManager>>();
-            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object, mockLogger.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
 
 
             //Arrange
@@ -154,8 +151,7 @@ namespace FinanceManagement.Tests
             Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();          
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
-            Mock<ILogger<FinancialTransactionsManager>> mockLogger = new Mock<ILogger<FinancialTransactionsManager>>();
-            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object, mockLogger.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
 
             //Arrange
             List<FinancialTransaction> financialTransactions = new List<FinancialTransaction>();
@@ -222,8 +218,7 @@ namespace FinanceManagement.Tests
             mockFinancialTransactionsRepository.Setup(repository => repository.Update(It.IsAny<FinancialTransaction>())).Callback((FinancialTransaction financialTransaction) => mockFinancialTransactionsDatabase[0] = financialTransaction);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
-            Mock<ILogger<FinancialTransactionsManager>> mockLogger = new Mock<ILogger<FinancialTransactionsManager>>();
-            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object, mockLogger.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
 
             //Arrange
 
@@ -298,8 +293,7 @@ namespace FinanceManagement.Tests
             mockFinancialTransactionsRepository.Setup(repository => repository.GetById(5)).Returns(expectedFinancialTransaction);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
-            Mock<ILogger<FinancialTransactionsManager>> mockLogger = new Mock<ILogger<FinancialTransactionsManager>>();
-            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object, mockLogger.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
 
             //Act
             FinancialTransaction obtainedFinancialTransaction = financialTransactionsManager.GetFinancialTransactionById(5);

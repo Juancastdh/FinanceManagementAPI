@@ -25,8 +25,7 @@ namespace FinanceManagement.Tests
             mockCategoriesRepository.Setup(repository => repository.Add(It.IsAny<Category>())).Callback((Category category) => mockCategoriesDatabase.Add(category));
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
-            Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
-            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
             //Arrange
             Category expectedCategory = new Category
@@ -57,8 +56,7 @@ namespace FinanceManagement.Tests
             mockCategoriesRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockCategoriesDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
-            Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
-            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
             //Act
             IEnumerable<Category> returnedCategories = categoriesManager.GetAllCategories();
@@ -83,8 +81,7 @@ namespace FinanceManagement.Tests
             mockCategoriesRepository.Setup(repository => repository.GetById(5)).Returns(expectedCategory);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
-            Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
-            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
             //Act
             Category obtainedCategory = categoriesManager.GetCategoryById(5);
@@ -105,8 +102,7 @@ namespace FinanceManagement.Tests
             mockCategoriesRepository.Setup(repository => repository.Update(It.IsAny<Category>())).Callback((Category category) => mockCategoriesDatabase[0] = category);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
-            Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
-            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
             //Arrange
 
@@ -176,8 +172,7 @@ namespace FinanceManagement.Tests
             });
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
-            Mock<ILogger<CategoriesManager>> mockLogger = new Mock<ILogger<CategoriesManager>>();
-            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object, mockLogger.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
             //Arrange
             Category categoryToRemain = new Category

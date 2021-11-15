@@ -12,83 +12,53 @@ namespace FinanceManagement.Core.Managers.Implementations
     public class PeriodsManager : IPeriodsManager
     {
         private readonly IUnitOfWork UnitOfWork;
-        private readonly ILogger<PeriodsManager> Logger;
 
-        public PeriodsManager(IUnitOfWork unitOfWork, ILogger<PeriodsManager> logger)
+        public PeriodsManager(IUnitOfWork unitOfWork)
         {
             UnitOfWork = unitOfWork;
-            Logger = logger;
         }
 
         public void AddPeriod(Period period)
         {
 
-            try
-            {
-                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+            IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
 
-                periodsRepository.Add(period);
+            periodsRepository.Add(period);
 
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+            UnitOfWork.SaveChanges();
 
         }
 
         public void DeletePeriodById(int id)
         {
-            try
-            {
-                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+            IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
 
-                periodsRepository.DeleteById(id);
+            periodsRepository.DeleteById(id);
 
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+            UnitOfWork.SaveChanges();
         }
 
         public IEnumerable<Period> GetAllPeriods()
         {
-            try
-            {
-                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
 
-                IEnumerable<Period> periods = periodsRepository.GetAll();
+            IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
 
-                return periods;
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+            IEnumerable<Period> periods = periodsRepository.GetAll();
+
+            return periods;
+
         }
 
         public Period GetPeriodById(int id)
         {
             Period? period;
 
-            try
-            {
-                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
-                period = periodsRepository.GetById(id);
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
 
-            if(period == null)
+            IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+            period = periodsRepository.GetById(id);
+
+
+            if (period == null)
             {
                 throw new DataNotFoundException();
             }
@@ -99,17 +69,11 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         public void UpdatePeriod(Period period)
         {
-            try
-            {
-                IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
-                periodsRepository.Update(period);
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+
+            IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+            periodsRepository.Update(period);
+            UnitOfWork.SaveChanges();
+
         }
     }
 }

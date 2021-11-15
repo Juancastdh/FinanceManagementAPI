@@ -12,7 +12,7 @@ namespace FinanceManagement.API.Helpers
             this.next = next;
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, ILogger<ExceptionHandler> logger)
         {
 
             try
@@ -21,14 +21,16 @@ namespace FinanceManagement.API.Helpers
             }
             catch (Exception exception)
             {
-                await HandleException(context, exception);
+                await HandleException(context, exception, logger);
             }
         }
 
-        private static Task HandleException(HttpContext context, Exception exception)
+        private static Task HandleException(HttpContext context, Exception exception, ILogger<ExceptionHandler> logger)
         {
             HttpStatusCode code;
             string result = "";
+
+            logger.LogError(exception.Message, exception);
 
             if (exception is DataNotFoundException)
             {

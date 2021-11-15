@@ -9,72 +9,45 @@ using System.Text;
 
 namespace FinanceManagement.Core.Managers.Implementations
 {
-    public class CategoriesManager: ICategoriesManager
+    public class CategoriesManager : ICategoriesManager
     {
         private readonly IUnitOfWork UnitOfWork;
-        private readonly ILogger<CategoriesManager> Logger;
 
-        public CategoriesManager(IUnitOfWork unitOfWork, ILogger<CategoriesManager> logger)
+        public CategoriesManager(IUnitOfWork unitOfWork)
         {
             UnitOfWork = unitOfWork;
-            Logger = logger;
         }
 
         public IEnumerable<Category> GetAllCategories()
         {
 
-            try
-            {
-                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-                IEnumerable<Category> categories = categoriesRepository.GetAll();
+            IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-                return categories;
+            IEnumerable<Category> categories = categoriesRepository.GetAll();
 
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+            return categories;
 
 
         }
 
         public void AddCategory(Category category)
         {
-            try
-            {
-                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
+            IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-                categoriesRepository.Add(category);
+            categoriesRepository.Add(category);
 
-                UnitOfWork.SaveChanges();
-            }
-            catch(Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+            UnitOfWork.SaveChanges();
         }
 
         public Category GetCategoryById(int id)
         {
             Category? category;
 
+            IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
+            category = categoriesRepository.GetById(id);
 
-            try
-            {
-                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
-                category = categoriesRepository.GetById(id);
-            }
-            catch(Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
-
-            if(category == null)
+            if (category == null)
             {
                 throw new DataNotFoundException();
             }
@@ -84,34 +57,20 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         public void UpdateCategory(Category category)
         {
-            try
-            {
-                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
-                categoriesRepository.Update(category);
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+            IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
+            categoriesRepository.Update(category);
+            UnitOfWork.SaveChanges();
         }
 
         public void DeleteCategoryById(int id)
         {
-            try
-            {
-                IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-                categoriesRepository.DeleteById(id);
+            IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-                UnitOfWork.SaveChanges();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError(exception.Message, exception);
-                throw;
-            }
+            categoriesRepository.DeleteById(id);
+
+            UnitOfWork.SaveChanges();
+
         }
     }
 }

@@ -25,8 +25,7 @@ namespace FinanceManagement.Tests
             mockPeriodsRepository.Setup(repository => repository.Add(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase.Add(period));
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
             //Arrange
             Period expectedPeriod = new Period
@@ -57,8 +56,7 @@ namespace FinanceManagement.Tests
             mockPeriodsRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockPeriodsDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
 
             //Arrange
@@ -99,8 +97,7 @@ namespace FinanceManagement.Tests
             mockPeriodsRepository.Setup(repository => repository.GetById(5)).Returns(expectedPeriod);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
             //Act
             Period obtainedPeriod = periodsManager.GetPeriodById(5);
@@ -121,8 +118,7 @@ namespace FinanceManagement.Tests
             mockPeriodsRepository.Setup(repository => repository.Update(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase[0] = period);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
             //Arrange
 
@@ -167,8 +163,7 @@ namespace FinanceManagement.Tests
             });
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            Mock<ILogger<PeriodsManager>> mockLogger = new Mock<ILogger<PeriodsManager>>();
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object, mockLogger.Object);
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
             //Arrange
             Period periodToRemain = new Period
