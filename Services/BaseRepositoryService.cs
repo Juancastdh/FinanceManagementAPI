@@ -28,7 +28,8 @@ namespace FinanceManagement.Services
 
         public void DeleteById(int id)
         {
-            T entityToDelete = DatabaseSet.Find(id);
+            T? entityToDelete = DatabaseSet.Find(id);
+            if(entityToDelete != null)
             Delete(entityToDelete);
         }
 

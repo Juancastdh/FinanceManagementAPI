@@ -10,9 +10,9 @@ namespace FinanceManagement.DataAccess
 {
     public class DatabaseContext: DbContext
     {
-        public DbSet<Period> Periods { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<FinancialTransaction> FinancialTransactions { get; set; }
+        public DbSet<Period>? Periods { get; set; }
+        public DbSet<Category>? Categories { get; set; }
+        public DbSet<FinancialTransaction>? FinancialTransactions { get; set; }
 
         public DatabaseContext(DbContextOptions options) : base(options)
         {

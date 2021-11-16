@@ -165,16 +165,6 @@ namespace FinanceManagement.Tests
 
             //Setup
             List<Category> mockCategoriesDatabase = new List<Category>();
-            Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
-            mockCategoriesRepository.Setup(repository => repository.DeleteById(It.IsAny<int>())).Callback((int categoryId) => {
-                Category categoryToDelete = mockCategoriesDatabase.Find(category => category.Id == categoryId);
-                mockCategoriesDatabase.Remove(categoryToDelete);
-            });
-            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
-            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
-
-            //Arrange
             Category categoryToRemain = new Category
             {
                 Id = 1,
@@ -191,21 +181,26 @@ namespace FinanceManagement.Tests
 
             mockCategoriesDatabase.Add(categoryToRemain);
             mockCategoriesDatabase.Add(categoryToBeDeleted);
+            Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
+            mockCategoriesRepository.Setup(repository => repository.DeleteById(2)).Callback((int categoryId) => {
+                mockCategoriesDatabase.Remove(categoryToBeDeleted);
+            });
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
+            CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
-            IEnumerable<Category> orderedMockCategoriesDatabase = mockCategoriesDatabase.OrderBy(x => x.Id);
+            //Arrange
 
             IEnumerable<Category> expectedCategoriesDatabase = new List<Category>
             {
                 categoryToRemain
             };
 
-            expectedCategoriesDatabase = expectedCategoriesDatabase.OrderBy(x => x.Id);
-
             //Act
             categoriesManager.DeleteCategoryById(categoryToBeDeleted.Id);
 
             //Assert
-            Assert.Equal(expectedCategoriesDatabase, orderedMockCategoriesDatabase);
+            Assert.Equal(expectedCategoriesDatabase, mockCategoriesDatabase);
 
         }
     }

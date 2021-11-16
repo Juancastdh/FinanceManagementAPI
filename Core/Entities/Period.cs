@@ -8,6 +8,6 @@ namespace FinanceManagement.Core.Entities
     {
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public ICollection<FinancialTransaction> FinancialTransactions { get; set; }
+        public ICollection<FinancialTransaction>? FinancialTransactions { get; set; }
     }
 }

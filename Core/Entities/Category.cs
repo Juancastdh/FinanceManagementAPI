@@ -8,6 +8,6 @@ namespace FinanceManagement.Core.Entities
     {
         public string? Name { get; set; }
         public int Percentage { get; set; }
-        public ICollection<FinancialTransaction> FinancialTransactions { get; set; }
+        public ICollection<FinancialTransaction>? FinancialTransactions { get; set; }
     }
 }
