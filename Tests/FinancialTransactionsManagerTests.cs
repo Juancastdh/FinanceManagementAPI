@@ -60,16 +60,6 @@ namespace FinanceManagement.Tests
 
             //Setup
             List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
-            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
-            mockFinancialTransactionsRepository.Setup(repository => repository.DeleteById(It.IsAny<int>())).Callback((int financialTransactionId) => { 
-                FinancialTransaction financialTransactionToDelete = mockFinancialTransactionsDatabase.Find(finanacialTransaction => finanacialTransaction.Id == financialTransactionId); 
-                mockFinancialTransactionsDatabase.Remove(financialTransactionToDelete); 
-            });
-            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
-            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
-
-            //Arrange
             FinancialTransaction transactionToRemain = new FinancialTransaction
             {
                 Id = 1,
@@ -88,21 +78,28 @@ namespace FinanceManagement.Tests
 
             mockFinancialTransactionsDatabase.Add(transactionToRemain);
             mockFinancialTransactionsDatabase.Add(transactionToBeDeleted);
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.DeleteById(2)).Callback((int financialTransactionId) => {
+                mockFinancialTransactionsDatabase.Remove(transactionToBeDeleted); 
+            });
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
 
-            IEnumerable<FinancialTransaction> orderedMockFinancialTransactionsDatabase = mockFinancialTransactionsDatabase.OrderBy(x => x.Id);
+            //Arrange
+
 
             IEnumerable<FinancialTransaction> expectedFinancialTransactionsDatabase = new List<FinancialTransaction>
             {
                 transactionToRemain
             };
 
-            expectedFinancialTransactionsDatabase = expectedFinancialTransactionsDatabase.OrderBy(x => x.Id);
 
             //Act
             financialTransactionsManager.DeleteFinancialTransactionById(transactionToBeDeleted.Id);
 
             //Assert
-            Assert.Equal(expectedFinancialTransactionsDatabase, orderedMockFinancialTransactionsDatabase);
+            Assert.Equal(expectedFinancialTransactionsDatabase, mockFinancialTransactionsDatabase);
 
         }
 

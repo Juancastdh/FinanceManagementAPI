@@ -156,16 +156,6 @@ namespace FinanceManagement.Tests
 
             //Setup
             List<Period> mockPeriodsDatabase = new List<Period>();
-            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
-            mockPeriodsRepository.Setup(repository => repository.DeleteById(It.IsAny<int>())).Callback((int periodId) => {
-                Period periodToDelete = mockPeriodsDatabase.Find(period => period.Id == periodId);
-                mockPeriodsDatabase.Remove(periodToDelete);
-            });
-            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
-
-            //Arrange
             Period periodToRemain = new Period
             {
                 Id = 1,
@@ -182,8 +172,16 @@ namespace FinanceManagement.Tests
 
             mockPeriodsDatabase.Add(periodToRemain);
             mockPeriodsDatabase.Add(periodToBeDeleted);
+            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
+            mockPeriodsRepository.Setup(repository => repository.DeleteById(2)).Callback((int periodId) => {
+                mockPeriodsDatabase.Remove(periodToBeDeleted);
+            });
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
-            IEnumerable<Period> orderedMockPeriodsDatabase = mockPeriodsDatabase.OrderBy(x => x.Id);
+            //Arrange
+
 
             IEnumerable<Period> expectedPeriodsDatabase = new List<Period>
             {
@@ -196,7 +194,7 @@ namespace FinanceManagement.Tests
             periodsManager.DeletePeriodById(periodToBeDeleted.Id);
 
             //Assert
-            Assert.Equal(expectedPeriodsDatabase, orderedMockPeriodsDatabase);
+            Assert.Equal(expectedPeriodsDatabase, mockPeriodsDatabase);
 
         }
     }

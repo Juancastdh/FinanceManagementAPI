@@ -7,7 +7,7 @@ namespace FinanceManagement.Core.Models
 {
     public class FinancialReport
     {
-        public IEnumerable<FinancialTransaction> FinancialTransactions { get; set; }
+        public IEnumerable<FinancialTransaction>? FinancialTransactions { get; set; }
         public decimal TotalValue { get; set; }
     }
 }
