@@ -22,6 +22,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<PeriodReadDto>), 200)]
         public IActionResult GetAllPeriods()
         {
             IEnumerable<Period> periods = PeriodsManager.GetAllPeriods();
@@ -32,6 +33,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(PeriodReadDto), 201)]
         public IActionResult CreatePeriod([FromBody] PeriodCreateDto period)
         {
             Period periodToCreate = Mapper.Map<Period>(period);
@@ -44,6 +46,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetPeriodById")]
+        [ProducesResponseType(typeof(PeriodReadDto), 200)]
         public IActionResult GetPeriodById(int id)
         {
             Period period = PeriodsManager.GetPeriodById(id);
@@ -55,6 +58,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(200)]
         public IActionResult UpdatePeriod([FromBody] PeriodReadDto period)
         {
             Period periodToBeUpdated = Mapper.Map<Period>(period);
@@ -65,6 +69,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
         public IActionResult DeletePeriodById(int id)
         {
             PeriodsManager.DeletePeriodById(id);

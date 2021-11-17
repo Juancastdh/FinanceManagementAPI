@@ -21,6 +21,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<CategoryReadDto>), 200)]
         public IActionResult GetAllCategories()
         {
             IEnumerable<Category> categories = CategoriesManager.GetAllCategories();
@@ -31,6 +32,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(CategoryReadDto), 201)]
         public IActionResult CreateCategory([FromBody] CategoryCreateDto category)
         {
             Category categoryToCreate = Mapper.Map<Category>(category);
@@ -44,6 +46,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetCategoryById")]
+        [ProducesResponseType(typeof(CategoryReadDto), 200)]
         public IActionResult GetCategoryById(int id)
         {
             Category category = CategoriesManager.GetCategoryById(id);
@@ -55,6 +58,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(200)]
         public IActionResult UpdateCategory([FromBody] CategoryReadDto category)
         {
             Category categoryToBeUpdated = Mapper.Map<Category>(category);
@@ -65,6 +69,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
         public IActionResult DeleteCategoryById(int id)
         {
             CategoriesManager.DeleteCategoryById(id);

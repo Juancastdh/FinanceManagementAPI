@@ -22,6 +22,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<FinancialTransactionReadDto>), 200)]
         public IActionResult GetAllFinancialTransactions()
         {
             IEnumerable<FinancialTransaction> financialTransactions = FinancialTransactionsManager.GetAllFinancialTransactions();
@@ -32,6 +33,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(FinancialTransactionReadDto), 201)]
         public IActionResult CreateFinancialTransaction([FromBody] FinancialTransactionCreateDto financialTransaction)
         {
             FinancialTransaction financialTransactionToBeCreated = Mapper.Map<FinancialTransaction>(financialTransaction);
@@ -44,6 +46,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpPut]
+        [ProducesResponseType(200)]
         public IActionResult UpdateFinancialTransaction([FromBody] FinancialTransactionReadDto financialTransaction)
         {
             FinancialTransaction financialTransactionToBeUpdated = Mapper.Map<FinancialTransaction>(financialTransaction);
@@ -54,6 +57,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
         public IActionResult DeleteFinancialTransactionById(int id)
         {
             FinancialTransactionsManager.DeleteFinancialTransactionById(id);
@@ -61,7 +65,8 @@ namespace FinanceManagement.API.Controllers
             return Ok();           
         } 
 
-        [HttpGet("FinancialReport")]    
+        [HttpGet("FinancialReport")]
+        [ProducesResponseType(typeof(FinancialReport), 200)]
         public IActionResult GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null)
         {
             FinancialReport financialReport = FinancialTransactionsManager.GetFinancialReport(periodId, categoryId, isExpense);
@@ -73,6 +78,7 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetFinancialTransactionById")]
+        [ProducesResponseType(typeof(FinancialTransactionReadDto), 200)]
         public IActionResult GetFinancialTransactionById(int id)
         {
             FinancialTransaction financialTransaction = FinancialTransactionsManager.GetFinancialTransactionById(id);
