@@ -1,5 +1,6 @@
 ﻿using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers.Implementations;
+using FinanceManagement.Core.Models;
 using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
 using Microsoft.Extensions.Logging;
@@ -7,6 +8,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.Json;
 using Xunit;
 
@@ -299,6 +301,126 @@ namespace FinanceManagement.Tests
             //Assert
             Assert.Equal(expectedFinancialTransactionString, obtainedFinancialTransactionString);
 
+        }
+
+        [Fact]
+        public void GetFinancialReport_Orders_Transactions_By_Date()
+        {
+            //Setup and Arrange
+            FinancialTransaction financialTransaction1 = new FinancialTransaction
+            {
+                Id = 5,
+                Date = DateTime.Now,
+                Description = "",
+                IsExpense = true,
+                Value = 500,
+                CategoryId = 1,
+                PeriodId = 1
+            };
+            FinancialTransaction financialTransaction2 = new FinancialTransaction
+            {
+                Id = 2,
+                Date = DateTime.Now.AddDays(-15),
+                Description = "",
+                IsExpense = false,
+                Value = 1000,
+                CategoryId = 1,
+                PeriodId = 1
+            };
+            FinancialTransaction financialTransaction3 = new FinancialTransaction
+            {
+                Id = 1,
+                Date = DateTime.Now.AddDays(20),
+                Description = "",
+                IsExpense = false,
+                Value = 900,
+                CategoryId = 1,
+                PeriodId = 1
+            };
+
+            IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction> 
+            {
+                financialTransaction1,
+                financialTransaction2,
+                financialTransaction3        
+            };
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>>(),
+            It.IsAny<Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>>(),
+            It.IsAny<string>())).Returns(mockFinancialTransactionsDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            IEnumerable<FinancialTransaction> expectedFinancialTransactions = mockFinancialTransactionsDatabase.OrderBy(t => t.Date);
+
+            //Act
+            FinancialReport obtainedFinancialReport = financialTransactionsManager.GetFinancialReport();
+            IEnumerable<FinancialTransaction> obtainedFinancialTransactions = obtainedFinancialReport.FinancialTransactions;
+
+            //Assert
+            Assert.Equal(expectedFinancialTransactions, obtainedFinancialTransactions);
+        }
+
+        [Theory]
+        [InlineData(200, false, 300, false, 100, true, 400)]
+        [InlineData(200, true, 300, false, 100, true, 0)]
+        [InlineData(100, true, 200, true, 300, true, -600)]
+        [InlineData(500, false, 150, false, 1000, false, 1650)]
+        public void GetFinancialReport_TotalValue_Is_SumOfIncomeTransactionValues_Minus_SumOfExpenseTransactionValues(int transactionValue1, bool isExpense1, int transactionValue2, bool isExpense2, int transactionValue3, bool isExpense3, int expectedTotalValue)
+        {
+            //Setup and Arrange
+            FinancialTransaction financialTransaction1 = new FinancialTransaction
+            {
+                Id = 1,
+                Date = DateTime.Now,
+                Description = "",
+                IsExpense = isExpense1,
+                Value = transactionValue1,
+                CategoryId = 1,
+                PeriodId = 1
+            };
+            FinancialTransaction financialTransaction2 = new FinancialTransaction
+            {
+                Id = 2,
+                Date = DateTime.Now.AddDays(-15),
+                Description = "",
+                IsExpense = isExpense2,
+                Value = transactionValue2,
+                CategoryId = 1,
+                PeriodId = 1
+            };
+            FinancialTransaction financialTransaction3 = new FinancialTransaction
+            {
+                Id = 3,
+                Date = DateTime.Now.AddDays(20),
+                Description = "",
+                IsExpense = isExpense3,
+                Value = transactionValue3,
+                CategoryId = 1,
+                PeriodId = 1
+            };
+
+            IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>
+            {
+                financialTransaction1,
+                financialTransaction2,
+                financialTransaction3
+            };
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>>(),
+            It.IsAny<Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>>(),
+            It.IsAny<string>())).Returns(mockFinancialTransactionsDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            //Act
+            FinancialReport obtainedFinancialReport = financialTransactionsManager.GetFinancialReport();
+            decimal obtainedTotalValue = obtainedFinancialReport.TotalValue;
+
+            //Assert
+            Assert.Equal(expectedTotalValue, obtainedTotalValue);
         }
 
 
