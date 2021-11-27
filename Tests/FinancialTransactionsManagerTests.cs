@@ -424,5 +424,75 @@ namespace FinanceManagement.Tests
         }
 
 
+        [Fact]
+        public void GetFinancialReport_Throws_InvalidOperationException_When_EndDate_is_lower_than_StartDate()
+        {
+            //Setup and Arrange
+            IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>>(),
+            It.IsAny<Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>>(),
+            It.IsAny<string>())).Returns(mockFinancialTransactionsDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            DateTime startDate = new DateTime(2021, 6, 10);
+            DateTime endDate = new DateTime(2021, 6, 9);
+
+            //Assert
+            Assert.Throws<InvalidOperationException>(() => financialTransactionsManager.GetFinancialReport(null, null, null, startDate, endDate));
+
+        }
+
+        [Fact]
+        public void GetFinancialReport_DoesNotThrow_InvalidOperationException_When_EndDate_is_higher_than_StartDate()
+        {
+            //Setup and Arrange
+            IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>>(),
+            It.IsAny<Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>>(),
+            It.IsAny<string>())).Returns(mockFinancialTransactionsDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            DateTime endDate = new DateTime(2021, 6, 10);
+            DateTime startDate = new DateTime(2021, 6, 9);
+
+            //Assert
+            financialTransactionsManager.GetFinancialReport(null, null, null, startDate, endDate);
+        }
+
+        public static readonly object[][] CorrectData =
+        {
+            new object[] { new DateTime(2021, 6, 10), null},
+            new object[] { null, new DateTime(2021, 6, 9) },
+            new object[] { null, null}
+        };
+
+        [Theory, MemberData(nameof(CorrectData))]
+        public void GetFinancialReport_DoesNotThrow_InvalidOperationException_When_Either_Date_Is_Null(DateTime? startDate, DateTime? endDate)
+        {
+            //Setup and Arrange
+            IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>>(),
+            It.IsAny<Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>>(),
+            It.IsAny<string>())).Returns(mockFinancialTransactionsDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            //Assert
+            financialTransactionsManager.GetFinancialReport(null, null, null, startDate, endDate);
+        }
+
+
+
+
+
+
     }
 }

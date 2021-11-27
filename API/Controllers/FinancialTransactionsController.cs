@@ -67,9 +67,9 @@ namespace FinanceManagement.API.Controllers
 
         [HttpGet("FinancialReport")]
         [ProducesResponseType(typeof(FinancialReport), 200)]
-        public IActionResult GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null)
+        public IActionResult GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null, DateTime? startDate = null, DateTime? endDate = null)
         {
-            FinancialReport financialReport = FinancialTransactionsManager.GetFinancialReport(periodId, categoryId, isExpense);
+            FinancialReport financialReport = FinancialTransactionsManager.GetFinancialReport(periodId, categoryId, isExpense, startDate, endDate);
 
             FinancialReportReadDto financialReportReadDto = Mapper.Map<FinancialReportReadDto>(financialReport);
 
