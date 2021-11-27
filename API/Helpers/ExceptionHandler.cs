@@ -36,6 +36,11 @@ namespace FinanceManagement.API.Helpers
             {
                 code = HttpStatusCode.NotFound;
             }
+            else if(exception is InvalidOperationException)
+            {
+                code = HttpStatusCode.BadRequest;
+                result = exception.Message;
+            }
             else
             {
                 code = HttpStatusCode.InternalServerError;

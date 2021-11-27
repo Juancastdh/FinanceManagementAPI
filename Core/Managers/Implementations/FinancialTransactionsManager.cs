@@ -55,12 +55,11 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         }
 
-        public FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null)
+        public FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null, DateTime? startDate = null, DateTime? endDate = null)
         {
-
-
+            ValidateGetFinancialReportParameters(startDate, endDate);
             IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-            IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense));
+            IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense) && (startDate == null || f.Date >= startDate) && (endDate == null || f.Date <= endDate));
 
             financialTransactions = financialTransactions.OrderBy(transaction => transaction.Date);
 
@@ -76,6 +75,17 @@ namespace FinanceManagement.Core.Managers.Implementations
 
 
 
+        }
+
+        private void ValidateGetFinancialReportParameters(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            if(startDate != null && endDate != null)
+            {
+                if(startDate > endDate)
+                {
+                    throw new InvalidOperationException("End date cannot be lower than start date");
+                }
+            }
         }
 
         public FinancialTransaction GetFinancialTransactionById(int id)
