@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: financemanagement-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: financemanagement-api
+  template:
+    metadata:
+      labels:
+        app: financemanagement-api
+    spec:
+      containers:
+        - name: financemanagement-api
+          image: juancastdh/financemanagement:api
+          env:
+          - name: "CONNECTIONSTRINGS__FinanceManagementDatabase"
+            valueFrom:
+              secretKeyRef:
+                name: connectionstringprod
+                key: connectionstring
