@@ -88,5 +88,15 @@ namespace FinanceManagement.API.Controllers
             return Ok(financialTransactionReadDto);
 
         }
+
+        [HttpPost]
+        public IActionResult CreateFinancialTransactions([FromBody] FinancialTransactionsCreateDto financialTransactions)
+        {
+            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions);
+
+            FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
+
+            return Ok();
+        }
     }
 }
