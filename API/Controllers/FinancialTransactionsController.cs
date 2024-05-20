@@ -90,13 +90,36 @@ namespace FinanceManagement.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateFinancialTransactions([FromBody] FinancialTransactionsCreateDto financialTransactions)
+        [Route("Many/Json")]
+        [ProducesResponseType(typeof(IEnumerable<FinancialTransactionReadDto>), 200)]
+        public IActionResult CreateFinancialTransactions([FromBody] IEnumerable<FinancialTransactionCreateDto> financialTransactions)
         {
             IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions);
+            
+            IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);
 
-            FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
+            return Ok(createdFinancialTransactions);
+            //FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
 
-            return Ok();
+            //return Ok();
         }
+
+        [HttpPost]
+        [Route("Many/Xml")]
+        [ProducesResponseType(typeof(IEnumerable<FinancialTransactionReadDto>), 200)]
+        [Consumes("application/xml")]
+        [Produces("application/xml")]
+        public IActionResult CreateFinancialTransactionsXml([FromBody] FinancialTransactionsXmlCreateDto financialTransactionsXml)
+        {
+            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions.Transactions);
+
+            IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);
+
+            return Ok(createdFinancialTransactions);
+            //FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
+
+            //return Ok();
+        }
+
     }
 }

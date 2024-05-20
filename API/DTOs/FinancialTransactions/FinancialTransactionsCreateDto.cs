@@ -1,7 +1,11 @@
-﻿namespace FinanceManagement.API.DTOs.FinancialTransactions
+﻿using System.Xml.Serialization;
+
+namespace FinanceManagement.API.DTOs.FinancialTransactions
 {
+    [XmlRoot("transactions")]
     public class FinancialTransactionsCreateDto
     {
-        public IEnumerable<FinancialTransactionCreateDto> FinancialTransactions { get; set; }
+        [XmlElement("transaction")]
+        public List<FinancialTransactionCreateDto> FinancialTransactions { get; set; }
     }
 }

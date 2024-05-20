@@ -28,7 +28,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FinanceManagementDatabase")));
+//builder.Services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FinanceManagementDatabase")));
+builder.Services.AddDbContext<DatabaseContext>(options => options.UseInMemoryDatabase(databaseName: "TestDb"));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICategoriesManager, CategoriesManager>();
 builder.Services.AddScoped<IPeriodsManager, PeriodsManager>();
