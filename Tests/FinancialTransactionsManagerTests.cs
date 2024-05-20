@@ -489,6 +489,76 @@ namespace FinanceManagement.Tests
             financialTransactionsManager.GetFinancialReport(null, null, null, startDate, endDate);
         }
 
+        [Fact]
+        public void AddFinancialTransactions_Adds_FinancialTransactions_Correctly_To_Repository()
+        {
+            //Setup
+            List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.Add(It.IsAny<FinancialTransaction>())).Callback((FinancialTransaction financialTransaction) => mockFinancialTransactionsDatabase.Add(financialTransaction));
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            //Arrange
+            IEnumerable<FinancialTransaction> expectedFinancialTransactions = new List<FinancialTransaction>{
+                new FinancialTransaction
+                {
+                    Id = 1,
+                    Date = DateTime.Now,
+                    Description = "Test Transaction",
+                    IsExpense = true,
+                    Value = 1000,
+                    CategoryId = 1,
+                    Category = new Category
+                    {
+                        Id = 1,
+                        Name = "TestCategory",
+                        Percentage = 5
+                    }
+                },
+                new FinancialTransaction
+                {
+                    Id = 2,
+                    Date = DateTime.Now,
+                    Description = "Test Transaction 2",
+                    IsExpense = true,
+                    Value = 1500,
+                    CategoryId = 2,
+                    Category = new Category
+                    {
+                        Id = 2,
+                        Name = "TestCategory 2",
+                        Percentage = 10
+                    }
+                },
+                new FinancialTransaction
+                {
+                    Id = 2,
+                    Date = DateTime.Now,
+                    Description = "Test Transaction 3",
+                    IsExpense = true,
+                    Value = 7200,
+                    CategoryId = 3,
+                    Category = new Category
+                    {
+                        Id = 3,
+                        Name = "TestCategory 3",
+                        Percentage = 21
+                    }
+                }
+            };
+            string expectedFinancialTransactionsString = JsonSerializer.Serialize(expectedFinancialTransactions);
+
+            //Act
+            financialTransactionsManager.AddFinancialTransactions(expectedFinancialTransactions);
+            IEnumerable<FinancialTransaction> addedFinancialTransactions = mockFinancialTransactionsDatabase;
+            string addedFinancialTransactionsString = JsonSerializer.Serialize(addedFinancialTransactions);
+
+            //Assert
+            Assert.Equal(expectedFinancialTransactionsString, addedFinancialTransactionsString);
+        }
+
 
 
 

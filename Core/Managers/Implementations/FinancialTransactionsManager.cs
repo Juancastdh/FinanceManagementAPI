@@ -134,5 +134,17 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork.SaveChanges();
 
         }
+
+        public void AddFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions)
+        {
+            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+
+            foreach(FinancialTransaction financialTransaction in financialTransactions)
+            {
+                financialTransactionsRepository.Add(financialTransaction);
+            }     
+
+            UnitOfWork.SaveChanges();
+        }
     }
 }
