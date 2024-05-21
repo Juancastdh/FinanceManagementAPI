@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using FinanceManagement.API.DTOs.FinancialTransactions;
+using FinanceManagement.API.Helpers;
 using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers;
 using FinanceManagement.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FinanceManagement.API.Controllers
 {
@@ -13,6 +15,7 @@ namespace FinanceManagement.API.Controllers
     public class FinancialTransactionsController : ControllerBase
     {
         private readonly IFinancialTransactionsManager FinancialTransactionsManager;
+       
         private readonly IMapper Mapper;
 
         public FinancialTransactionsController(IFinancialTransactionsManager financialTransactionsManager, IMapper mapper)
@@ -111,7 +114,12 @@ namespace FinanceManagement.API.Controllers
         [Produces("application/xml")]
         public IActionResult CreateFinancialTransactionsXml([FromBody] FinancialTransactionsXmlCreateDto financialTransactionsXml)
         {
-            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions.Transactions);
+            IFileImporter fileImporter = new XMLFileImporter(Mapper);
+
+            var file = Convert.FromBase64String(financialTransactionsXml.Xml);
+            var fileStreamReader = new StreamReader(new MemoryStream(file), Encoding.UTF8);
+
+            IEnumerable <FinancialTransaction> financialTransactionsToBeCreated = fileImporter.GetFinancialTransactionsFromFile(fileStreamReader);
 
             IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);
 
