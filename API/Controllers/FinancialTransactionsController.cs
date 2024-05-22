@@ -15,13 +15,14 @@ namespace FinanceManagement.API.Controllers
     public class FinancialTransactionsController : ControllerBase
     {
         private readonly IFinancialTransactionsManager FinancialTransactionsManager;
-       
+        private readonly IFileImporter XmlFileImporter;
         private readonly IMapper Mapper;
 
         public FinancialTransactionsController(IFinancialTransactionsManager financialTransactionsManager, IMapper mapper)
         {
             FinancialTransactionsManager = financialTransactionsManager;
             Mapper = mapper;
+            XmlFileImporter = new XMLFileImporter(mapper);
         }
 
         [HttpGet]
@@ -110,23 +111,26 @@ namespace FinanceManagement.API.Controllers
         [HttpPost]
         [Route("Many/Xml")]
         [ProducesResponseType(typeof(IEnumerable<FinancialTransactionReadDto>), 200)]
-        [Consumes("application/xml")]
-        [Produces("application/xml")]
         public IActionResult CreateFinancialTransactionsXml([FromBody] FinancialTransactionsXmlCreateDto financialTransactionsXml)
         {
-            IFileImporter fileImporter = new XMLFileImporter(Mapper);
 
-            var file = Convert.FromBase64String(financialTransactionsXml.Xml);
-            var fileStreamReader = new StreamReader(new MemoryStream(file), Encoding.UTF8);
+            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = GetFinancialTransactionsFromBase64XmlString(financialTransactionsXml.Xml);
 
-            IEnumerable <FinancialTransaction> financialTransactionsToBeCreated = fileImporter.GetFinancialTransactionsFromFile(fileStreamReader);
+            FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
 
             IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);
 
             return Ok(createdFinancialTransactions);
-            //FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
 
-            //return Ok();
+        }
+
+        private IEnumerable<FinancialTransaction> GetFinancialTransactionsFromBase64XmlString(string xmlFile)
+        {
+            var file = Convert.FromBase64String(xmlFile);
+            var fileStreamReader = new StreamReader(new MemoryStream(file), Encoding.UTF8);
+            IEnumerable<FinancialTransaction> financialTransactions = XmlFileImporter.GetFinancialTransactionsFromFile(fileStreamReader);
+
+            return financialTransactions;
         }
 
     }
