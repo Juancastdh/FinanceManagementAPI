@@ -114,8 +114,10 @@ namespace FinanceManagement.API.Controllers
         public IActionResult CreateFinancialTransactionsXml([FromBody] FinancialTransactionsXmlCreateDto financialTransactionsXml)
         {
 
-            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = GetFinancialTransactionsFromBase64XmlString(financialTransactionsXml.Xml);
+            IEnumerable<FinancialTransaction> financialTransactions = GetFinancialTransactionsFromBase64XmlString(financialTransactionsXml.XmlBase64File);
 
+            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = FinancialTransactionsManager.GetFixedFinancialTransactions(financialTransactions);
+            
             FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
 
             IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);

@@ -6,6 +6,6 @@ namespace FinanceManagement.API.DTOs.FinancialTransactions
 {
     public class FinancialTransactionsXmlCreateDto
     {
-        public string Xml { get; set; }
+        public string XmlBase64File { get; set; }
     }
 }

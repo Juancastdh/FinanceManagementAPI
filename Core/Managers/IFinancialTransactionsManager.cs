@@ -18,6 +18,8 @@ namespace FinanceManagement.Core.Managers
         FinancialReport GetFinancialReport(int? periodId = null, int? categoryId = null, bool? isExpense = null, DateTime? startDate = null, DateTime? endDate = null);
         FinancialTransaction GetFinancialTransactionById(int id);
         void AddFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions);
+        FinancialTransaction GetFixedFinancialTransaction(FinancialTransaction financialTransaction);
+        IEnumerable<FinancialTransaction> GetFixedFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions);
 
 
     }

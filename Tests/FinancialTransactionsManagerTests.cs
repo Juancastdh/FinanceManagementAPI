@@ -5,6 +5,7 @@ using FinanceManagement.Core.Repositories;
 using FinanceManagement.Core.UnitOfWork;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -557,6 +558,113 @@ namespace FinanceManagement.Tests
 
             //Assert
             Assert.Equal(expectedFinancialTransactionsString, addedFinancialTransactionsString);
+        }
+
+        [Theory]
+        [InlineData(100, false)]
+        [InlineData(0, false)]
+        [InlineData(-100, true)]
+        public void GetFixedFinancialTransaction_Corrects_IsExpense_Correctly(int value, bool expectedIsExpense)
+        {
+            //Setup
+            List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.Add(It.IsAny<FinancialTransaction>())).Callback((FinancialTransaction financialTransaction) => mockFinancialTransactionsDatabase.Add(financialTransaction));
+            List<Period> mockPeriodsDatabase = new List<Period>();
+            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
+            mockPeriodsRepository.Setup(repository => repository.Add(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase.Add(period));           
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+
+            //Arrange
+            FinancialTransaction financialTransactionToFix = new FinancialTransaction
+            {
+                Id = 1,
+                Date = DateTime.Now,
+                Description = "Test Transaction",
+                Value = value,
+                CategoryId = 1
+            };
+
+
+            //Act
+            FinancialTransaction fixedFinancialTransaction = financialTransactionsManager.GetFixedFinancialTransaction(financialTransactionToFix);
+            bool fixedIsExpense = fixedFinancialTransaction.IsExpense;
+
+            //Assert
+            Assert.Equal(expectedIsExpense, fixedIsExpense);
+        }
+
+        public static readonly object[][] CorrectPeriodData =
+{
+            new object[] { new DateTime(2024, 1, 18), 1},
+            new object[] { new DateTime(2024, 1, 29), 2},
+            new object[] { new DateTime(2024, 2, 12), 2},
+            new object[] { new DateTime(2024, 2, 20), 3},
+            new object[] { new DateTime(2024, 2, 27), 3}
+        };
+
+        [Theory, MemberData(nameof(CorrectPeriodData))]
+        public void GetFixedFinancialTransactions_Corrects_Period_Correctly(DateTime financialTransactionDate, int expectedPeriodId)
+        {
+            //Setup
+            Period period1 = new Period
+            {
+                Id = 1,
+                StartDate = new DateTime(2024, 1, 13),
+                EndDate = new DateTime(2024, 1, 28)
+            };
+            Period period2 = new Period
+            {
+                Id = 2,
+                StartDate = new DateTime(2024, 1, 28),
+                EndDate = new DateTime(2024, 2, 13)
+            };
+            Period period3 = new Period
+            {
+                Id = 3,
+                StartDate = new DateTime(2024, 2, 13),
+                EndDate = new DateTime(2024, 2, 28)
+            };
+
+            IEnumerable<Period> mockPeriodsDatabase = new List<Period>
+            {
+                period1,
+                period2,
+                period3
+            };
+            List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
+            mockFinancialTransactionsRepository.Setup(repository => repository.Add(It.IsAny<FinancialTransaction>())).Callback((FinancialTransaction financialTransaction) => mockFinancialTransactionsDatabase.Add(financialTransaction));
+            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
+            mockPeriodsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<Period, bool>>>(),
+            It.IsAny<Func<IQueryable<Period>, IOrderedQueryable<Period>>>(),
+            It.IsAny<string>())).Returns(mockPeriodsDatabase);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
+            FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
+
+            //Arrange
+            FinancialTransaction financialTransactionToFix = new FinancialTransaction
+            {
+                Id = 1,
+                Date = financialTransactionDate,
+                Description = "Test Transaction",
+                Value = 100,
+                CategoryId = 1
+            };
+
+            //Act
+            FinancialTransaction fixedFinancialTransaction = financialTransactionsManager.GetFixedFinancialTransaction(financialTransactionToFix);
+            int periodId = fixedFinancialTransaction.PeriodId;
+
+            //Assert
+            Assert.Equal(expectedPeriodId, periodId);
+
         }
 
 
