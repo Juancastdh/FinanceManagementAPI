@@ -100,12 +100,11 @@ namespace FinanceManagement.API.Controllers
         {
             IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions);
             
+            FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
+
             IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);
 
             return Ok(createdFinancialTransactions);
-            //FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
-
-            //return Ok();
         }
 
         [HttpPost]

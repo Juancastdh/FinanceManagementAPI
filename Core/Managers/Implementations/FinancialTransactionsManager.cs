@@ -153,6 +153,7 @@ namespace FinanceManagement.Core.Managers.Implementations
 
             fixedFinancialTransaction.IsExpense = IsExpenseValue(financialTransaction.Value);
             fixedFinancialTransaction.PeriodId = GetPeriodIdByDate(financialTransaction.Date);
+            fixedFinancialTransaction.Value = Math.Abs(financialTransaction.Value);
 
             return fixedFinancialTransaction;
 
@@ -160,14 +161,19 @@ namespace FinanceManagement.Core.Managers.Implementations
 
         public IEnumerable<FinancialTransaction> GetFixedFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions)
         {
-            IEnumerable<FinancialTransaction> fixedFinancialTransactions = financialTransactions.Select(financialTransaction => GetFixedFinancialTransaction(financialTransaction));
+            List<FinancialTransaction> fixedFinancialTransactions = new List<FinancialTransaction>();
+
+            foreach(FinancialTransaction financialTransaction in financialTransactions)
+            {
+                fixedFinancialTransactions.Add(GetFixedFinancialTransaction(financialTransaction));
+            }
 
             return fixedFinancialTransactions;
         }
 
         private bool IsExpenseValue(decimal value)
         {
-            return value < 0;
+            return value > 0;
         }
 
         private int GetPeriodIdByDate(DateTime date)
