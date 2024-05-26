@@ -561,9 +561,9 @@ namespace FinanceManagement.Tests
         }
 
         [Theory]
-        [InlineData(100, false)]
+        [InlineData(-100, false)]
         [InlineData(0, false)]
-        [InlineData(-100, true)]
+        [InlineData(100, true)]
         public void GetFixedFinancialTransaction_Corrects_IsExpense_Correctly(int value, bool expectedIsExpense)
         {
             //Setup
