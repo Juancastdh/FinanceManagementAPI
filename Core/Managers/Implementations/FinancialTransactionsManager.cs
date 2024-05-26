@@ -134,5 +134,63 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork.SaveChanges();
 
         }
+
+        public void AddFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions)
+        {
+            IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
+
+            foreach(FinancialTransaction financialTransaction in financialTransactions)
+            {
+                financialTransactionsRepository.Add(financialTransaction);
+            }     
+
+            UnitOfWork.SaveChanges();
+        }
+
+        public FinancialTransaction GetFixedFinancialTransaction(FinancialTransaction financialTransaction)
+        {
+            FinancialTransaction fixedFinancialTransaction = financialTransaction;
+
+            fixedFinancialTransaction.IsExpense = IsExpenseValue(financialTransaction.Value);
+            fixedFinancialTransaction.PeriodId = GetPeriodIdByDate(financialTransaction.Date);
+            fixedFinancialTransaction.Value = Math.Abs(financialTransaction.Value);
+
+            return fixedFinancialTransaction;
+
+        }
+
+        public IEnumerable<FinancialTransaction> GetFixedFinancialTransactions(IEnumerable<FinancialTransaction> financialTransactions)
+        {
+            List<FinancialTransaction> fixedFinancialTransactions = new List<FinancialTransaction>();
+
+            foreach(FinancialTransaction financialTransaction in financialTransactions)
+            {
+                fixedFinancialTransactions.Add(GetFixedFinancialTransaction(financialTransaction));
+            }
+
+            return fixedFinancialTransactions;
+        }
+
+        private bool IsExpenseValue(decimal value)
+        {
+            return value > 0;
+        }
+
+        private int GetPeriodIdByDate(DateTime date)
+        {
+            int periodId = 0;
+            IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+
+            IEnumerable<Period> periods = periodsRepository.GetAll();
+
+            Period? selectedPeriod = periods.FirstOrDefault(period => date >= period.StartDate && date < period.EndDate);
+
+            if (selectedPeriod != null)
+            {
+                periodId = selectedPeriod.Id;
+            }
+
+            return periodId;
+        }
     }
 }

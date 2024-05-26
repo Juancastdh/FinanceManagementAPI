@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using FinanceManagement.API.DTOs.FinancialTransactions;
+using FinanceManagement.API.Helpers;
 using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers;
 using FinanceManagement.Core.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace FinanceManagement.API.Controllers
 {
@@ -13,12 +15,14 @@ namespace FinanceManagement.API.Controllers
     public class FinancialTransactionsController : ControllerBase
     {
         private readonly IFinancialTransactionsManager FinancialTransactionsManager;
+        private readonly IFileImporter XmlFileImporter;
         private readonly IMapper Mapper;
 
         public FinancialTransactionsController(IFinancialTransactionsManager financialTransactionsManager, IMapper mapper)
         {
             FinancialTransactionsManager = financialTransactionsManager;
             Mapper = mapper;
+            XmlFileImporter = new XMLFileImporter(mapper);
         }
 
         [HttpGet]
@@ -88,5 +92,47 @@ namespace FinanceManagement.API.Controllers
             return Ok(financialTransactionReadDto);
 
         }
+
+        [HttpPost]
+        [Route("Many/Json")]
+        [ProducesResponseType(typeof(IEnumerable<FinancialTransactionReadDto>), 200)]
+        public IActionResult CreateFinancialTransactions([FromBody] IEnumerable<FinancialTransactionCreateDto> financialTransactions)
+        {
+            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = Mapper.Map<IEnumerable<FinancialTransaction>>(financialTransactions);
+            
+            FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
+
+            IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);
+
+            return Ok(createdFinancialTransactions);
+        }
+
+        [HttpPost]
+        [Route("Many/Xml")]
+        [ProducesResponseType(typeof(IEnumerable<FinancialTransactionReadDto>), 200)]
+        public IActionResult CreateFinancialTransactionsXml([FromBody] FinancialTransactionsXmlCreateDto financialTransactionsXml)
+        {
+
+            IEnumerable<FinancialTransaction> financialTransactions = GetFinancialTransactionsFromBase64XmlString(financialTransactionsXml.XmlBase64File);
+
+            IEnumerable<FinancialTransaction> financialTransactionsToBeCreated = FinancialTransactionsManager.GetFixedFinancialTransactions(financialTransactions);
+            
+            FinancialTransactionsManager.AddFinancialTransactions(financialTransactionsToBeCreated);
+
+            IEnumerable<FinancialTransactionReadDto> createdFinancialTransactions = Mapper.Map<IEnumerable<FinancialTransactionReadDto>>(financialTransactionsToBeCreated);
+
+            return Ok(createdFinancialTransactions);
+
+        }
+
+        private IEnumerable<FinancialTransaction> GetFinancialTransactionsFromBase64XmlString(string xmlFile)
+        {
+            var file = Convert.FromBase64String(xmlFile);
+            var fileStreamReader = new StreamReader(new MemoryStream(file), Encoding.UTF8);
+            IEnumerable<FinancialTransaction> financialTransactions = XmlFileImporter.GetFinancialTransactionsFromFile(fileStreamReader);
+
+            return financialTransactions;
+        }
+
     }
 }
