@@ -5,9 +5,9 @@ namespace FinanceManagement.Core.Entities
     public class Account : BaseEntity
     {
 
-        public string Identifier { get; set; }
+        public required string Identifier { get; set; }
 
-        public string Description { get; set; }
+        public required string Description { get; set; }
 
     }
 

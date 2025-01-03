@@ -13,7 +13,7 @@ namespace FinanceManagement.DataAccess
         public DbSet<Period>? Periods { get; set; }
         public DbSet<Category>? Categories { get; set; }
         public DbSet<FinancialTransaction>? FinancialTransactions { get; set; }
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Account>? Accounts { get; set; }
 
         public DatabaseContext(DbContextOptions options) : base(options)
         {
