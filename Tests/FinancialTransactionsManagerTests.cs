@@ -40,9 +40,16 @@ namespace FinanceManagement.Tests
                 CategoryId = 1,
                 Category = new Category
                 {
-                    Id=1,
+                    Id = 1,
                     Name = "TestCategory",
                     Percentage = 5
+                },
+                AccountId = 1,
+                Account = new Account
+                {
+                    Id = 1,
+                    Identifier = "123456789",
+                    Description = "Test Account"
                 }
             };
 
@@ -82,8 +89,9 @@ namespace FinanceManagement.Tests
             mockFinancialTransactionsDatabase.Add(transactionToRemain);
             mockFinancialTransactionsDatabase.Add(transactionToBeDeleted);
             Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
-            mockFinancialTransactionsRepository.Setup(repository => repository.DeleteById(2)).Callback((int financialTransactionId) => {
-                mockFinancialTransactionsDatabase.Remove(transactionToBeDeleted); 
+            mockFinancialTransactionsRepository.Setup(repository => repository.DeleteById(2)).Callback((int financialTransactionId) =>
+            {
+                mockFinancialTransactionsDatabase.Remove(transactionToBeDeleted);
             });
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
@@ -148,7 +156,7 @@ namespace FinanceManagement.Tests
         {
 
             //Setup    
-            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();          
+            Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
             FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
@@ -235,6 +243,13 @@ namespace FinanceManagement.Tests
                     Id = 1,
                     Name = "TestCategory",
                     Percentage = 5
+                },
+                AccountId = 1,
+                Account = new Account
+                {
+                    Id = 1,
+                    Identifier = "123456789",
+                    Description = "Test Account"
                 }
             };
 
@@ -253,9 +268,16 @@ namespace FinanceManagement.Tests
                     Id = 1,
                     Name = "TestCategory",
                     Percentage = 5
+                },
+                AccountId = 2,
+                Account = new Account
+                {
+                    Id = 2,
+                    Identifier = "1011121314",
+                    Description = "Updated Test Account"
                 }
             };
-            
+
             string updatedFinancialTransactionString = JsonSerializer.Serialize(updatedFinancialTransaction);
 
             //Act
@@ -316,7 +338,8 @@ namespace FinanceManagement.Tests
                 IsExpense = true,
                 Value = 500,
                 CategoryId = 1,
-                PeriodId = 1
+                PeriodId = 1,
+                AccountId = 1
             };
             FinancialTransaction financialTransaction2 = new FinancialTransaction
             {
@@ -326,7 +349,8 @@ namespace FinanceManagement.Tests
                 IsExpense = false,
                 Value = 1000,
                 CategoryId = 1,
-                PeriodId = 1
+                PeriodId = 1,
+                AccountId = 1
             };
             FinancialTransaction financialTransaction3 = new FinancialTransaction
             {
@@ -336,14 +360,15 @@ namespace FinanceManagement.Tests
                 IsExpense = false,
                 Value = 900,
                 CategoryId = 1,
-                PeriodId = 1
+                PeriodId = 1,
+                AccountId = 1
             };
 
-            IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction> 
+            IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>
             {
                 financialTransaction1,
                 financialTransaction2,
-                financialTransaction3        
+                financialTransaction3
             };
             Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
             mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>>(),
@@ -516,6 +541,12 @@ namespace FinanceManagement.Tests
                         Id = 1,
                         Name = "TestCategory",
                         Percentage = 5
+                    },
+                    AccountId = 1,
+                    Account = new Account{
+                        Id = 1,
+                        Identifier = "123456789",
+                        Description = "Test Account 1"
                     }
                 },
                 new FinancialTransaction
@@ -531,6 +562,12 @@ namespace FinanceManagement.Tests
                         Id = 2,
                         Name = "TestCategory 2",
                         Percentage = 10
+                    },
+                    AccountId = 2,
+                    Account = new Account{
+                        Id = 2,
+                        Identifier = "1011121314",
+                        Description = "Test Account 2"
                     }
                 },
                 new FinancialTransaction
@@ -546,6 +583,12 @@ namespace FinanceManagement.Tests
                         Id = 3,
                         Name = "TestCategory 3",
                         Percentage = 21
+                    },
+                    AccountId = 3,
+                    Account = new Account{
+                        Id = 3,
+                        Identifier = "1516171819",
+                        Description = "Test Account 3"
                     }
                 }
             };
@@ -572,7 +615,7 @@ namespace FinanceManagement.Tests
             mockFinancialTransactionsRepository.Setup(repository => repository.Add(It.IsAny<FinancialTransaction>())).Callback((FinancialTransaction financialTransaction) => mockFinancialTransactionsDatabase.Add(financialTransaction));
             List<Period> mockPeriodsDatabase = new List<Period>();
             Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
-            mockPeriodsRepository.Setup(repository => repository.Add(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase.Add(period));           
+            mockPeriodsRepository.Setup(repository => repository.Add(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase.Add(period));
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
