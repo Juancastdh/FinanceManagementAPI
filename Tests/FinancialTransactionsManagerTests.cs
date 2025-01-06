@@ -44,7 +44,7 @@ namespace FinanceManagement.Tests
                     Name = "TestCategory",
                     Percentage = 5
                 },
-                AccountId = 1,
+                AccountIdentifier = "123456789",
                 Account = new Account
                 {
                     Id = 1,
@@ -244,7 +244,7 @@ namespace FinanceManagement.Tests
                     Name = "TestCategory",
                     Percentage = 5
                 },
-                AccountId = 1,
+                AccountIdentifier = "123456789",
                 Account = new Account
                 {
                     Id = 1,
@@ -269,7 +269,7 @@ namespace FinanceManagement.Tests
                     Name = "TestCategory",
                     Percentage = 5
                 },
-                AccountId = 2,
+                AccountIdentifier = "1011121314",
                 Account = new Account
                 {
                     Id = 2,
@@ -338,8 +338,7 @@ namespace FinanceManagement.Tests
                 IsExpense = true,
                 Value = 500,
                 CategoryId = 1,
-                PeriodId = 1,
-                AccountId = 1
+                PeriodId = 1
             };
             FinancialTransaction financialTransaction2 = new FinancialTransaction
             {
@@ -349,8 +348,7 @@ namespace FinanceManagement.Tests
                 IsExpense = false,
                 Value = 1000,
                 CategoryId = 1,
-                PeriodId = 1,
-                AccountId = 1
+                PeriodId = 1
             };
             FinancialTransaction financialTransaction3 = new FinancialTransaction
             {
@@ -360,8 +358,7 @@ namespace FinanceManagement.Tests
                 IsExpense = false,
                 Value = 900,
                 CategoryId = 1,
-                PeriodId = 1,
-                AccountId = 1
+                PeriodId = 1
             };
 
             IEnumerable<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>
@@ -542,7 +539,7 @@ namespace FinanceManagement.Tests
                         Name = "TestCategory",
                         Percentage = 5
                     },
-                    AccountId = 1,
+                    AccountIdentifier = "123456789",
                     Account = new Account{
                         Id = 1,
                         Identifier = "123456789",
@@ -563,7 +560,7 @@ namespace FinanceManagement.Tests
                         Name = "TestCategory 2",
                         Percentage = 10
                     },
-                    AccountId = 2,
+                    AccountIdentifier = "1011121314",
                     Account = new Account{
                         Id = 2,
                         Identifier = "1011121314",
@@ -584,7 +581,7 @@ namespace FinanceManagement.Tests
                         Name = "TestCategory 3",
                         Percentage = 21
                     },
-                    AccountId = 3,
+                    AccountIdentifier = "1516171819",
                     Account = new Account{
                         Id = 3,
                         Identifier = "1516171819",

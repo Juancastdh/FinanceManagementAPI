@@ -14,7 +14,7 @@ namespace FinanceManagement.Core.Entities
         public bool IsExpense { get; set; }
         public int PeriodId { get; set; }
         public virtual Period? Period { get; set; }
-        public int AccountId { get; set; }
+        public string? AccountIdentifier { get; set; }
         public virtual Account? Account { get; set; }
     }
 }
