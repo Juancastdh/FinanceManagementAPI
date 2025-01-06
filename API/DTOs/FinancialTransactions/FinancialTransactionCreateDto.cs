@@ -17,6 +17,7 @@ namespace FinanceManagement.API.DTOs.FinancialTransactions
         public int CategoryId { get; set; }
         public bool IsExpense { get; set; }
         public int PeriodId { get; set; }
+        public int AccountId { get; set; }
 
     }
 }
