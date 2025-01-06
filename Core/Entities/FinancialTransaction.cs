@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FinanceManagement.Core.Entities
 {
-    public class FinancialTransaction: BaseEntity
+    public class FinancialTransaction : BaseEntity
     {
         public DateTime Date { get; set; }
         public decimal Value { get; set; }
@@ -14,5 +14,7 @@ namespace FinanceManagement.Core.Entities
         public bool IsExpense { get; set; }
         public int PeriodId { get; set; }
         public virtual Period? Period { get; set; }
+        public int AccountId { get; set; }
+        public virtual Account? Account { get; set; }
     }
 }
