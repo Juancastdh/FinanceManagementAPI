@@ -4,6 +4,7 @@ using FinanceManagement.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManagement.DataAccess.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250106223744_AddAccountsToTransactions")]
+    partial class AddAccountsToTransactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +38,7 @@ namespace FinanceManagement.DataAccess.Migrations
 
                     b.Property<string>("Identifier")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -70,8 +72,8 @@ namespace FinanceManagement.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("AccountIdentifier")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -94,7 +96,7 @@ namespace FinanceManagement.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountIdentifier");
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("CategoryId");
 
@@ -126,8 +128,9 @@ namespace FinanceManagement.DataAccess.Migrations
                 {
                     b.HasOne("FinanceManagement.Core.Entities.Account", "Account")
                         .WithMany("FinancialTransactions")
-                        .HasForeignKey("AccountIdentifier")
-                        .HasPrincipalKey("Identifier");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FinanceManagement.Core.Entities.Category", "Category")
                         .WithMany("FinancialTransactions")
