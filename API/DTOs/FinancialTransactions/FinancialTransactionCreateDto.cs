@@ -17,6 +17,7 @@ namespace FinanceManagement.API.DTOs.FinancialTransactions
         public int CategoryId { get; set; }
         public bool IsExpense { get; set; }
         public int PeriodId { get; set; }
+        [XmlElement("accountIdentifier")]
         public string? AccountIdentifier { get; set; }
 
     }
