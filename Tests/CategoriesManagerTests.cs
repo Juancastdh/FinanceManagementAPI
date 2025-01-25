@@ -1,3 +1,4 @@
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using FinanceManagement.Core.Entities;
 using FinanceManagement.Core.Managers;
 using FinanceManagement.Core.Managers.Implementations;
@@ -21,7 +22,7 @@ namespace FinanceManagement.Tests
         {
             //Setup
             List<Category> mockCategoriesDatabase = new List<Category>();
-            Mock<IRepository<Category>>  mockCategoriesRepository = new Mock<IRepository<Category>>();
+            Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
             mockCategoriesRepository.Setup(repository => repository.Add(It.IsAny<Category>())).Callback((Category category) => mockCategoriesDatabase.Add(category));
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
@@ -75,7 +76,7 @@ namespace FinanceManagement.Tests
                 Id = 5,
                 Name = "Expected Category",
                 Percentage = 15
-            };      
+            };
             string expectedCategoryString = JsonSerializer.Serialize(expectedCategory);
             Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
             mockCategoriesRepository.Setup(repository => repository.GetById(5)).Returns(expectedCategory);
@@ -155,53 +156,40 @@ namespace FinanceManagement.Tests
             };
 
             return categoriesRepository;
-            
+
         }
 
 
         [Fact]
-        public void DeleteCategoryById_Removes_Categories_Correctly_From_Repository()
+        public void DeleteCategoryById_SoftDeletes_Categories_Correctly_From_Repository()
         {
 
             //Setup
-            List<Category> mockCategoriesDatabase = new List<Category>();
-            Category categoryToRemain = new Category
+            Category categoryToDelete = new Category
             {
                 Id = 1,
-                Name = "Category that should remain in the repository",
-                Percentage = 10
+                Name = "Category to delete",
+                Percentage = 15
             };
-
-            Category categoryToBeDeleted = new Category
-            {
-                Id = 2,
-                Name = "Category that should be removed from the repository",
-                Percentage = 50
-            };
-
-            mockCategoriesDatabase.Add(categoryToRemain);
-            mockCategoriesDatabase.Add(categoryToBeDeleted);
+            List<Category> mockCategoriesDatabase = new List<Category>();
             Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
-            mockCategoriesRepository.Setup(repository => repository.DeleteById(2)).Callback((int categoryId) => {
-                mockCategoriesDatabase.Remove(categoryToBeDeleted);
-            });
+            mockCategoriesRepository.Setup(repository => repository.Update(It.IsAny<Category>())).Callback((Category category) => mockCategoriesDatabase[0] = category);
+            mockCategoriesRepository.Setup(repository => repository.GetById(1)).Returns(categoryToDelete);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Category>()).Returns(mockCategoriesRepository.Object);
             CategoriesManager categoriesManager = new CategoriesManager(mockUnitOfWork.Object);
 
-            //Arrange
 
-            IEnumerable<Category> expectedCategoriesDatabase = new List<Category>
-            {
-                categoryToRemain
-            };
+            //Arrange
+            mockCategoriesDatabase.Add(categoryToDelete);
+
+            bool expectedDeletedValue = true;
 
             //Act
-            categoriesManager.DeleteCategoryById(categoryToBeDeleted.Id);
+            categoriesManager.DeleteCategoryById(categoryToDelete.Id);
+            Category obtainedDeletedCategory = mockCategoriesDatabase.Single();
 
-            //Assert
-            Assert.Equal(expectedCategoriesDatabase, mockCategoriesDatabase);
-
+            Assert.Equal(expectedDeletedValue, obtainedDeletedCategory.Deleted);
         }
     }
 }

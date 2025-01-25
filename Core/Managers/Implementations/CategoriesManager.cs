@@ -67,7 +67,11 @@ namespace FinanceManagement.Core.Managers.Implementations
 
             IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-            categoriesRepository.DeleteById(id);
+            Category categoryToDelete = categoriesRepository.GetById(id);
+
+            categoryToDelete.Deleted = true;
+
+            categoriesRepository.Update(categoryToDelete);
 
             UnitOfWork.SaveChanges();
 

@@ -4,10 +4,11 @@ using System.Text;
 
 namespace FinanceManagement.Core.Entities
 {
-    public class Category: BaseEntity
+    public class Category : BaseEntity
     {
         public string? Name { get; set; }
         public int Percentage { get; set; }
+        public bool Deleted { get; set; }
         public ICollection<FinancialTransaction>? FinancialTransactions { get; set; }
     }
 }
