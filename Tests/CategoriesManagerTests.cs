@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.Json;
 using Xunit;
@@ -48,11 +49,24 @@ namespace FinanceManagement.Tests
         }
 
 
-        [Fact]
-        public void GetAllCategories_Returns_All_Categories_From_Repository()
+        public static IEnumerable<object[]> Data()
+        {
+
+            bool? deleted = null;
+
+            yield return new object[] { false, GenerateActiveCategoriesRepository() };
+            yield return new object[] { true, GenerateDeletedCategoriesRepository() };
+            yield return new object[] { deleted, GenerateCategoriesRepository() };
+
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+
+        public void GetAllCategories_Returns_All_Categories_From_Repository_With_Correct_filters(bool? deleted, IEnumerable<Category> expectedCategoriesDatabase)
         {
             //Setup and arrange
-            IEnumerable<Category> mockCategoriesDatabase = GenerateCategoriesRepository();
+            IEnumerable<Category> mockCategoriesDatabase = expectedCategoriesDatabase;
             Mock<IRepository<Category>> mockCategoriesRepository = new Mock<IRepository<Category>>();
             mockCategoriesRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockCategoriesDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -135,26 +149,64 @@ namespace FinanceManagement.Tests
             Assert.Equal(updatedCategoryString, obtainedUpdatedCategoryString);
         }
 
-        private IEnumerable<Category> GenerateCategoriesRepository()
+        private static IEnumerable<Category> GenerateActiveCategoriesRepository()
         {
-            List<Category> categoriesRepository = new List<Category>
+            List<Category> activeCategoriesRepository = new List<Category>
             {
                 new Category
                 {
                     Id = 1,
                     Name = "TestCategory1",
                     FinancialTransactions = new List<FinancialTransaction>(),
-                    Percentage = 5
+                    Percentage = 5,
+                    Deleted = false
                 },
                 new Category
                 {
                     Id = 2,
                     Name = "TestCategory2",
                     FinancialTransactions = new List<FinancialTransaction>(),
-                    Percentage = 10
+                    Percentage = 10,
+                    Deleted = false
                 }
             };
 
+            return activeCategoriesRepository;
+
+        }
+
+        private static IEnumerable<Category> GenerateDeletedCategoriesRepository()
+        {
+            List<Category> deletedCategoriesRepository = new List<Category>
+            {
+                new Category
+                {
+                    Id = 3,
+                    Name = "Deleted TestCategory1",
+                    FinancialTransactions = new List<FinancialTransaction>(),
+                    Percentage = 7,
+                    Deleted = true
+                },
+                new Category
+                {
+                    Id = 4,
+                    Name = "Deleted TestCategory2",
+                    FinancialTransactions = new List<FinancialTransaction>(),
+                    Percentage = 20,
+                    Deleted = true
+                }
+            };
+
+            return deletedCategoriesRepository;
+        }
+
+        private static IEnumerable<Category> GenerateCategoriesRepository()
+        {
+            List<Category> categoriesRepository =
+            [
+                .. GenerateActiveCategoriesRepository(),
+                .. GenerateDeletedCategoriesRepository(),
+            ];
             return categoriesRepository;
 
         }
@@ -191,5 +243,6 @@ namespace FinanceManagement.Tests
 
             Assert.Equal(expectedDeletedValue, obtainedDeletedCategory.Deleted);
         }
+
     }
 }
