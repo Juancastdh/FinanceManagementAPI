@@ -120,7 +120,9 @@ namespace FinanceManagement.Tests
             //Setup
             List<FinancialTransaction> mockFinancialTransactionsDatabase = new List<FinancialTransaction>();
             Mock<IRepository<FinancialTransaction>> mockFinancialTransactionsRepository = new Mock<IRepository<FinancialTransaction>>();
-            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockFinancialTransactionsDatabase);
+            mockFinancialTransactionsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<FinancialTransaction, bool>>>(),
+            It.IsAny<Func<IQueryable<FinancialTransaction>, IOrderedQueryable<FinancialTransaction>>>(),
+            It.IsAny<string>())).Returns(mockFinancialTransactionsDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<FinancialTransaction>()).Returns(mockFinancialTransactionsRepository.Object);
             FinancialTransactionsManager financialTransactionsManager = new FinancialTransactionsManager(mockUnitOfWork.Object);
@@ -132,14 +134,26 @@ namespace FinanceManagement.Tests
                 Id = 1,
                 Description = "Test Transaction 1",
                 IsExpense = true,
-                Value = 1000
+                Value = 1000,
+                CategoryId = 1,
+                Category = new Category{
+                    Id = 1,
+                    Deleted = false,
+                    Name = "Test Category 1"
+                }
             });
             mockFinancialTransactionsDatabase.Add(new FinancialTransaction
             {
                 Id = 2,
                 Description = "Test Transaction 2",
                 IsExpense = false,
-                Value = 2500
+                Value = 2500,
+                CategoryId = 2,
+                Category = new Category{
+                    Id = 2,
+                    Deleted = true,
+                    Name = "Test Category 2"
+                }
             });
 
             //Act

@@ -18,13 +18,24 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork = unitOfWork;
         }
 
-        public IEnumerable<Category> GetAllCategories()
+        public IEnumerable<Category> GetAllCategories(bool? deleted = null)
         {
 
 
             IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-            IEnumerable<Category> categories = categoriesRepository.GetAll();
+            IEnumerable<Category> categories;
+
+            if (deleted != null)
+            {
+                categories = categoriesRepository.GetAll(category => category.Deleted == deleted);
+            }
+            else
+            {
+                categories = categoriesRepository.GetAll();
+            }
+
+
 
             return categories;
 
@@ -67,7 +78,11 @@ namespace FinanceManagement.Core.Managers.Implementations
 
             IRepository<Category> categoriesRepository = UnitOfWork.GetRepository<Category>();
 
-            categoriesRepository.DeleteById(id);
+            Category categoryToDelete = categoriesRepository.GetById(id);
+
+            categoryToDelete.Deleted = true;
+
+            categoriesRepository.Update(categoryToDelete);
 
             UnitOfWork.SaveChanges();
 

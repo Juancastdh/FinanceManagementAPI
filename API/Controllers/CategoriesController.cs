@@ -22,9 +22,9 @@ namespace FinanceManagement.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<CategoryReadDto>), 200)]
-        public IActionResult GetAllCategories()
+        public IActionResult GetAllCategories(bool? deleted = null)
         {
-            IEnumerable<Category> categories = CategoriesManager.GetAllCategories();
+            IEnumerable<Category> categories = CategoriesManager.GetAllCategories(deleted);
 
             IEnumerable<CategoryReadDto> categoryReadDtos = Mapper.Map<IEnumerable<CategoryReadDto>>(categories);
 

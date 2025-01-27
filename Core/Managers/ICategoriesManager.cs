@@ -7,7 +7,7 @@ namespace FinanceManagement.Core.Managers
 {
     public interface ICategoriesManager
     {
-        IEnumerable<Category> GetAllCategories();
+        IEnumerable<Category> GetAllCategories(bool? deleted = null);
         void AddCategory(Category category);
         Category GetCategoryById(int id);
         void UpdateCategory(Category category);
