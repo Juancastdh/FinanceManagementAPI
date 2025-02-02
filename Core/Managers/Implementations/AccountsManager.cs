@@ -25,7 +25,12 @@ namespace FinanceManagement.Core.Managers.Implementations
         public void DeleteAccountById(int id)
         {
             IRepository<Account> accountsRepository = UnitOfWork.GetRepository<Account>();
-            accountsRepository.DeleteById(id);
+            Account accountToDelete = accountsRepository.GetById(id);
+
+            accountToDelete.Deleted = true;
+
+            accountsRepository.Update(accountToDelete);
+
             UnitOfWork.SaveChanges();
         }
 
