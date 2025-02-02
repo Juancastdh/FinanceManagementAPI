@@ -47,7 +47,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         {
             IRepository<Account> accountsRepository = UnitOfWork.GetRepository<Account>();
 
-            IEnumerable<Account> accounts = accountsRepository.GetAll();
+            IEnumerable<Account> accounts = accountsRepository.GetAll(account => account.Deleted == false);
 
             return accounts;
         }
