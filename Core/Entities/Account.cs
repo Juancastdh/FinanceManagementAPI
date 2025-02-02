@@ -7,6 +7,7 @@ namespace FinanceManagement.Core.Entities
 
         public required string Identifier { get; set; }
         public required string Description { get; set; }
+        public bool Deleted { get; set; }
         public ICollection<FinancialTransaction>? FinancialTransactions { get; set; }
 
     }
