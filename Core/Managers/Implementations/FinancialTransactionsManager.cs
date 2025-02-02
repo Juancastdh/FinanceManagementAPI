@@ -50,7 +50,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         {
 
             IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-            return financialTransactionsRepository.GetAll(includeProperties: "Category");
+            return financialTransactionsRepository.GetAll(includeProperties: "Category,Account");
 
 
         }
