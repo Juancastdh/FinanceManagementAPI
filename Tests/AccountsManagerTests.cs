@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.Json;
 using Xunit;
 
@@ -21,7 +22,7 @@ namespace FinanceManagement.Tests
         {
             //Setup
             List<Account> mockAccountsDatabase = new List<Account>();
-            Mock<IRepository<Account>>  mockAccountsRepository = new Mock<IRepository<Account>>();
+            Mock<IRepository<Account>> mockAccountsRepository = new Mock<IRepository<Account>>();
             mockAccountsRepository.Setup(repository => repository.Add(It.IsAny<Account>())).Callback((Account account) => mockAccountsDatabase.Add(account));
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Account>()).Returns(mockAccountsRepository.Object);
@@ -74,7 +75,7 @@ namespace FinanceManagement.Tests
                 Id = 5,
                 Identifier = "123456789",
                 Description = "Test account"
-            };      
+            };
             string expectedAccountString = JsonSerializer.Serialize(expectedAccount);
             Mock<IRepository<Account>> mockAccountsRepository = new Mock<IRepository<Account>>();
             mockAccountsRepository.Setup(repository => repository.GetById(5)).Returns(expectedAccount);
@@ -152,53 +153,43 @@ namespace FinanceManagement.Tests
             };
 
             return accountsRepository;
-            
+
         }
 
 
         [Fact]
-        public void DeleteAccountById_Removes_Accounts_Correctly_From_Repository()
+        public void DeleteAccountById_SoftDeletes_Accounts_Correctly_From_Repository()
         {
 
             //Setup
-            List<Account> mockAccountsDatabase = new List<Account>();
-            Account accountToRemain = new Account
+            Account accountToDelete = new Account
             {
                 Id = 1,
                 Identifier = "123456789",
-                Description = "Account that should remain in the repository",
-            };
+                Description = "Account to be soft deleted"
 
-            Account accountToBeDeleted = new Account
-            {
-                Id = 2,
-                Identifier = "101112131415",
-                Description = "Account that should be removed from the repository"
             };
-
-            mockAccountsDatabase.Add(accountToRemain);
-            mockAccountsDatabase.Add(accountToBeDeleted);
+            List<Account> mockAccountsDatabase = new List<Account>();
             Mock<IRepository<Account>> mockAccountsRepository = new Mock<IRepository<Account>>();
-            mockAccountsRepository.Setup(repository => repository.DeleteById(2)).Callback((int accountId) => {
-                mockAccountsDatabase.Remove(accountToBeDeleted);
-            });
+            mockAccountsRepository.Setup(repository => repository.Update(It.IsAny<Account>())).Callback((Account account) => mockAccountsDatabase[0] = account);
+            mockAccountsRepository.Setup(repository => repository.GetById(1)).Returns(accountToDelete);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Account>()).Returns(mockAccountsRepository.Object);
             AccountsManager accountsManager = new AccountsManager(mockUnitOfWork.Object);
 
-            //Arrange
 
-            IEnumerable<Account> expectedAccountsDatabase = new List<Account>
-            {
-                accountToRemain
-            };
+            //Arrange
+            mockAccountsDatabase.Add(accountToDelete);
+
+            bool expectedDeletedValue = true;
 
             //Act
-            accountsManager.DeleteAccountById(accountToBeDeleted.Id);
+            accountsManager.DeleteAccountById(accountToDelete.Id);
+            Account obtainedDeletedAccount = mockAccountsDatabase.Single();
 
-            //Assert
-            Assert.Equal(expectedAccountsDatabase, mockAccountsDatabase);
+            Assert.Equal(expectedDeletedValue, obtainedDeletedAccount.Deleted);
 
         }
+
     }
 }
