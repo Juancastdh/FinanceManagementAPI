@@ -48,12 +48,14 @@ namespace FinanceManagement.Tests
 
 
         [Fact]
-        public void GetAllAccounts_Returns_All_Accounts_From_Repository()
+        public void GetAllAccounts_Returns_All_NonDeleted_Accounts_From_Repository()
         {
             //Setup and arrange
             IEnumerable<Account> mockAccountsDatabase = GenerateAccountsRepository();
+            IEnumerable<Account> mockNonDeletedAccountsDatabase = GenerateNonDeletedAccountsRepository();
             Mock<IRepository<Account>> mockAccountsRepository = new Mock<IRepository<Account>>();
-            mockAccountsRepository.Setup(repository => repository.GetAll(null, null, "")).Returns(mockAccountsDatabase);
+            mockAccountsRepository.Setup(repository => repository.GetAll(null, It.IsAny<Func<IQueryable<Account>, IOrderedQueryable<Account>>>(), It.IsAny<string>())).Returns(mockAccountsDatabase);
+            mockAccountsRepository.Setup(repository => repository.GetAll(account => account.Deleted == false, It.IsAny<Func<IQueryable<Account>, IOrderedQueryable<Account>>>(), It.IsAny<string>())).Returns(mockNonDeletedAccountsDatabase);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Account>()).Returns(mockAccountsRepository.Object);
             AccountsManager accountsManager = new AccountsManager(mockUnitOfWork.Object);
@@ -62,7 +64,7 @@ namespace FinanceManagement.Tests
             IEnumerable<Account> returnedAccounts = accountsManager.GetAllAccounts();
 
             //Assert
-            Assert.Equal(mockAccountsDatabase, returnedAccounts);
+            Assert.Equal(mockNonDeletedAccountsDatabase, returnedAccounts);
         }
 
 
@@ -149,11 +151,39 @@ namespace FinanceManagement.Tests
                     Id = 2,
                     Identifier = "101112131415",
                     Description = "Test Account 2"
+                },
+                new Account{
+                    Id = 3,
+                    Identifier = "1617181920",
+                    Description = "Test Account 3",
+                    Deleted = true
                 }
             };
 
             return accountsRepository;
 
+        }
+
+        private IEnumerable<Account> GenerateNonDeletedAccountsRepository()
+        {
+
+            List<Account> accountsRepository = new List<Account>
+            {
+                new Account
+                {
+                    Id = 1,
+                    Identifier = "123456789",
+                    Description  = "Test Account 1"
+                },
+                new Account
+                {
+                    Id = 2,
+                    Identifier = "101112131415",
+                    Description = "Test Account 2"
+                }
+            };
+
+            return accountsRepository;
         }
 
 
