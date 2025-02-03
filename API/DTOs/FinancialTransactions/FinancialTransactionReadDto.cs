@@ -1,4 +1,5 @@
-﻿using FinanceManagement.API.DTOs.Categories;
+﻿using FinanceManagement.API.DTOs.Accounts;
+using FinanceManagement.API.DTOs.Categories;
 
 namespace FinanceManagement.API.DTOs.FinancialTransactions
 {
@@ -13,5 +14,6 @@ namespace FinanceManagement.API.DTOs.FinancialTransactions
         public int PeriodId { get; set; }
         public string? AccountIdentifier { get; set; }
         public required CategoryReadDto Category {get; set;}
+        public required AccountReadDto Account {get; set;}
     }
 }

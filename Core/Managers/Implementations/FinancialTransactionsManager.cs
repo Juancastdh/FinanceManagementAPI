@@ -50,7 +50,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         {
 
             IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-            return financialTransactionsRepository.GetAll(includeProperties: "Category");
+            return financialTransactionsRepository.GetAll(includeProperties: "Category,Account");
 
 
         }
@@ -59,7 +59,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         {
             ValidateGetFinancialReportParameters(startDate, endDate);
             IRepository<FinancialTransaction> financialTransactionsRepository = UnitOfWork.GetRepository<FinancialTransaction>();
-            IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense) && (startDate == null || f.Date >= startDate) && (endDate == null || f.Date <= endDate));
+            IEnumerable<FinancialTransaction> financialTransactions = financialTransactionsRepository.GetAll(f => (periodId == null || f.PeriodId == periodId) && (categoryId == null || f.CategoryId == categoryId) && (isExpense == null || f.IsExpense == isExpense) && (startDate == null || f.Date >= startDate) && (endDate == null || f.Date <= endDate), includeProperties: "Category,Account");
 
             financialTransactions = financialTransactions.OrderBy(transaction => transaction.Date);
 
