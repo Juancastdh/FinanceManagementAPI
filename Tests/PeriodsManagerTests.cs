@@ -8,6 +8,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.Json;
 using Xunit;
 
@@ -33,7 +34,7 @@ namespace FinanceManagement.Tests
                 Id = 1,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddDays(13)
-     
+
             };
             string expectedPeriodString = JsonSerializer.Serialize(expectedPeriod);
 
@@ -136,50 +137,37 @@ namespace FinanceManagement.Tests
         }
 
         [Fact]
-        public void DeletePeriodById_Removes_Periods_Correctly_From_Repository()
+        public void DeletePeriodById_SoftDeletes_Periods_Correctly_From_Repository()
         {
 
             //Setup
-            List<Period> mockPeriodsDatabase = new List<Period>();
-            Period periodToRemain = new Period
+            Period periodToDelete = new Period
             {
                 Id = 1,
                 StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddDays(13)
-            };
+                EndDate = DateTime.Now.AddDays(10)
 
-            Period periodToBeDeleted = new Period
-            {
-                Id = 2,
-                StartDate = DateTime.Now.AddDays(13),
-                EndDate = DateTime.Now.AddDays(26)
             };
-
-            mockPeriodsDatabase.Add(periodToRemain);
-            mockPeriodsDatabase.Add(periodToBeDeleted);
+            List<Period> mockPeriodsDatabase = new List<Period>();
             Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
-            mockPeriodsRepository.Setup(repository => repository.DeleteById(2)).Callback((int periodId) => {
-                mockPeriodsDatabase.Remove(periodToBeDeleted);
-            });
+            mockPeriodsRepository.Setup(repository => repository.GetById(1)).Returns(periodToDelete);
+            mockPeriodsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<Period, bool>>>(), It.IsAny<Func<IQueryable<Period>, IOrderedQueryable<Period>>>(), It.IsAny<string>())).Returns(mockPeriodsDatabase);
+            mockPeriodsRepository.Setup(repository => repository.Update(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase[0] = period);     
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
             PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
+
             //Arrange
+            mockPeriodsDatabase.Add(periodToDelete);
 
-
-            IEnumerable<Period> expectedPeriodsDatabase = new List<Period>
-            {
-                periodToRemain
-            };
-
-            expectedPeriodsDatabase = expectedPeriodsDatabase.OrderBy(x => x.Id);
+            bool expectedDeletedValue = true;
 
             //Act
-            periodsManager.DeletePeriodById(periodToBeDeleted.Id);
+            periodsManager.DeletePeriodById(periodToDelete.Id);
+            Period obtainedDeletedPeriod = mockPeriodsDatabase.Single();
 
-            //Assert
-            Assert.Equal(expectedPeriodsDatabase, mockPeriodsDatabase);
+            Assert.Equal(expectedDeletedValue, obtainedDeletedPeriod.Deleted);
 
         }
 
