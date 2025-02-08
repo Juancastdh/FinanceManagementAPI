@@ -43,7 +43,7 @@ namespace FinanceManagement.Core.Managers.Implementations
 
             IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
 
-            IEnumerable<Period> periods = periodsRepository.GetAll();
+            IEnumerable<Period> periods = periodsRepository.GetAll(period => period.Deleted == false);
 
             return periods;
 
