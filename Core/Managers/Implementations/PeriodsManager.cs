@@ -88,7 +88,8 @@ namespace FinanceManagement.Core.Managers.Implementations
         private Period GetLatestPeriod()
         {
             IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
-            IEnumerable<Period> periods = periodsRepository.GetAll(period => period.Deleted == false, periods => periods.OrderByDescending(period => period.StartDate));
+            IEnumerable<Period> periods = periodsRepository.GetAll(period => period.Deleted == false);
+            periods = periods.OrderByDescending(period => period.StartDate);
             Period latestPeriod = periods.First();
 
             return latestPeriod;

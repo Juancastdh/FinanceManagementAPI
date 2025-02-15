@@ -227,8 +227,8 @@ namespace FinanceManagement.Tests
             //Setup and arrange
             IList<Period> mockPeriodsDatabase = GeneratePeriodsRepository();
             Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
-            int periodIdToDelete = 2;
-            int periodIndexToDelete = 1;
+            int periodIdToDelete = 1;
+            int periodIndexToDelete = 0;
             Period periodToDelete = mockPeriodsDatabase[periodIndexToDelete];
             mockPeriodsRepository.Setup(repository => repository.GetById(periodIdToDelete)).Returns(periodToDelete);
             mockPeriodsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<Period, bool>>>(), It.IsAny<Func<IQueryable<Period>, IOrderedQueryable<Period>>>(), It.IsAny<string>())).Returns(mockPeriodsDatabase);
