@@ -171,7 +171,7 @@ namespace FinanceManagement.Tests
 
         }
 
-        private IEnumerable<Period> GeneratePeriodsRepository()
+        private List<Period> GeneratePeriodsRepository()
         {
             List<Period> periodsRepository = new List<Period>
             {
@@ -199,7 +199,7 @@ namespace FinanceManagement.Tests
 
         }
 
-        private IEnumerable<Period> GenerateNonDeletedPeriodsRepository()
+        private List<Period> GenerateNonDeletedPeriodsRepository()
         {
 
             List<Period> periodsRepository = new List<Period>
@@ -219,6 +219,30 @@ namespace FinanceManagement.Tests
             };
 
             return periodsRepository;
+        }
+
+        [Fact]
+        public void DeletePeriodById_Gives_Error_If_Not_Latest_Period(){
+
+            //Setup and arrange
+            IList<Period> mockPeriodsDatabase = GeneratePeriodsRepository();
+            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
+            int periodIdToDelete = 2;
+            int periodIndexToDelete = 1;
+            Period periodToDelete = mockPeriodsDatabase[periodIndexToDelete];
+            mockPeriodsRepository.Setup(repository => repository.GetById(periodIdToDelete)).Returns(periodToDelete);
+            mockPeriodsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<Period, bool>>>(), It.IsAny<Func<IQueryable<Period>, IOrderedQueryable<Period>>>(), It.IsAny<string>())).Returns(mockPeriodsDatabase);
+            mockPeriodsRepository.Setup(repository => repository.Update(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase[periodIndexToDelete] = period);
+            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
+            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
+            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
+
+            //Act
+            
+
+            //Act and assert
+            Assert.Throws<InvalidOperationException>(() => periodsManager.DeletePeriodById(periodIdToDelete));
+
         }
     }
 }
