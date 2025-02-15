@@ -141,31 +141,25 @@ namespace FinanceManagement.Tests
         {
 
             //Setup
-            Period periodToDelete = new Period
-            {
-                Id = 1,
-                StartDate = DateTime.Now,
-                EndDate = DateTime.Now.AddDays(10)
-
-            };
-            List<Period> mockPeriodsDatabase = new List<Period>();
+            IList<Period> mockPeriodsDatabase = GenerateNonDeletedPeriodsRepository();
             Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
-            mockPeriodsRepository.Setup(repository => repository.GetById(1)).Returns(periodToDelete);
+            int periodIdToDelete = 2;
+            int periodIndexToDelete = 1;
+            Period periodToDelete = mockPeriodsDatabase[periodIndexToDelete];
+            mockPeriodsRepository.Setup(repository => repository.GetById(periodIdToDelete)).Returns(periodToDelete);
             mockPeriodsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<Period, bool>>>(), It.IsAny<Func<IQueryable<Period>, IOrderedQueryable<Period>>>(), It.IsAny<string>())).Returns(mockPeriodsDatabase);
-            mockPeriodsRepository.Setup(repository => repository.Update(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase[0] = period);
+            mockPeriodsRepository.Setup(repository => repository.Update(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase[periodIndexToDelete] = period);
             Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
             mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
             PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
 
 
             //Arrange
-            mockPeriodsDatabase.Add(periodToDelete);
-
             bool expectedDeletedValue = true;
 
             //Act
             periodsManager.DeletePeriodById(periodToDelete.Id);
-            Period obtainedDeletedPeriod = mockPeriodsDatabase.Single();
+            Period obtainedDeletedPeriod = mockPeriodsDatabase[periodIndexToDelete];
 
             Assert.Equal(expectedDeletedValue, obtainedDeletedPeriod.Deleted);
 
@@ -244,29 +238,6 @@ namespace FinanceManagement.Tests
             //Act and assert
             Assert.Throws<InvalidOperationException>(() => periodsManager.DeletePeriodById(periodIdToDelete));
 
-        }
-
-        [Fact]
-        public void DeletePeriodById_Does_Not_Give_Error_If_Latest_Period()
-        {
-            //Setup and arrange
-            IList<Period> mockPeriodsDatabase = GenerateNonDeletedPeriodsRepository();
-            Mock<IRepository<Period>> mockPeriodsRepository = new Mock<IRepository<Period>>();
-            int periodIdToDelete = 2;
-            int periodIndexToDelete = 1;
-            Period periodToDelete = mockPeriodsDatabase[periodIndexToDelete];
-            mockPeriodsRepository.Setup(repository => repository.GetById(periodIdToDelete)).Returns(periodToDelete);
-            mockPeriodsRepository.Setup(repository => repository.GetAll(It.IsAny<Expression<Func<Period, bool>>>(), It.IsAny<Func<IQueryable<Period>, IOrderedQueryable<Period>>>(), It.IsAny<string>())).Returns(mockPeriodsDatabase);
-            mockPeriodsRepository.Setup(repository => repository.Update(It.IsAny<Period>())).Callback((Period period) => mockPeriodsDatabase[periodIndexToDelete] = period);
-            Mock<IUnitOfWork> mockUnitOfWork = new Mock<IUnitOfWork>();
-            mockUnitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Period>()).Returns(mockPeriodsRepository.Object);
-            PeriodsManager periodsManager = new PeriodsManager(mockUnitOfWork.Object);
-
-            //Act
-
-
-            //Act and assert
-            Assert.Throws<InvalidOperationException>(() => periodsManager.DeletePeriodById(periodIdToDelete));
         }
     }
 }
