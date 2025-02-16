@@ -35,11 +35,6 @@ namespace FinanceManagement.Core.Managers.Implementations
             IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
             Period periodToDelete = periodsRepository.GetById(id);
 
-            if (IsLatestPeriod(periodToDelete) == false)
-            {
-                throw new InvalidOperationException("Specified period is not the latest. Only the latest period can be deleted");
-            }
-
             periodToDelete.Deleted = true;
 
             periodsRepository.Update(periodToDelete);
@@ -83,30 +78,6 @@ namespace FinanceManagement.Core.Managers.Implementations
             periodsRepository.Update(period);
             UnitOfWork.SaveChanges();
 
-        }
-
-        private Period GetLatestPeriod()
-        {
-            IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
-            IEnumerable<Period> periods = periodsRepository.GetAll(period => period.Deleted == false);
-            periods = periods.OrderByDescending(period => period.StartDate);
-            Period latestPeriod = periods.First();
-
-            return latestPeriod;
-        }
-
-        private bool IsLatestPeriod(Period period)
-        {
-            bool isLatestPeriod = false;
-
-            Period latestPeriod = GetLatestPeriod();
-
-            if (period.Id == latestPeriod.Id)
-            {
-                isLatestPeriod = true;
-            }
-
-            return isLatestPeriod;
         }
     }
 }
