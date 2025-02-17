@@ -5,6 +5,7 @@ using FinanceManagement.Core.UnitOfWork;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FinanceManagement.Core.Managers.Implementations
@@ -32,8 +33,11 @@ namespace FinanceManagement.Core.Managers.Implementations
         public void DeletePeriodById(int id)
         {
             IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
+            Period periodToDelete = periodsRepository.GetById(id);
 
-            periodsRepository.DeleteById(id);
+            periodToDelete.Deleted = true;
+
+            periodsRepository.Update(periodToDelete);
 
             UnitOfWork.SaveChanges();
         }
@@ -43,7 +47,7 @@ namespace FinanceManagement.Core.Managers.Implementations
 
             IRepository<Period> periodsRepository = UnitOfWork.GetRepository<Period>();
 
-            IEnumerable<Period> periods = periodsRepository.GetAll();
+            IEnumerable<Period> periods = periodsRepository.GetAll(period => period.Deleted == false);
 
             return periods;
 
