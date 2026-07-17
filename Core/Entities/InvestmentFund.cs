@@ -8,5 +8,6 @@ namespace FinanceManagement.Core.Entities
         public string? Company { get; set; }
         public string? Description { get; set; }
         public string? Currency { get; set; }
+        public bool Deleted { get; set; }
     }
 }
