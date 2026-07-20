@@ -35,6 +35,7 @@ builder.Services.AddScoped<IPeriodsManager, PeriodsManager>();
 builder.Services.AddScoped<IFinancialTransactionsManager, FinancialTransactionsManager>();
 builder.Services.AddScoped<IAccountsManager, AccountsManager>();
 builder.Services.AddScoped<IInvestmentFundsManager, InvestmentFundsManager>();
+builder.Services.AddScoped<IInvestmentFundCategoriesManager, InvestmentFundCategoriesManager>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();

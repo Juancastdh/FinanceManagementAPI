@@ -1,10 +1,8 @@
-﻿namespace FinanceManagement.API.DTOs.InvestmentFunds
+﻿namespace FinanceManagement.API.DTOs.Categories
 {
-    public class InvestmentFundCreateDto
+    public class CategoryCreateDto
     {
         public string? Name { get; set; }
-        public string? Company { get; set; }
-        public string? Description { get; set; }
-        public string? Currency { get; set; }
+        public int Percentage { get; set; }
     }
 }
