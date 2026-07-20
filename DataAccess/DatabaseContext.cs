@@ -31,6 +31,7 @@ namespace FinanceManagement.DataAccess
             modelBuilder.Entity<FinancialTransaction>().HasOne(f => f.Account).WithMany(f => f.FinancialTransactions).HasForeignKey(f => f.AccountIdentifier).HasPrincipalKey(f=> f.Identifier);
             modelBuilder.Entity<Account>();
             modelBuilder.Entity<InvestmentFund>();
+            modelBuilder.Entity<InvestmentFundCategory>().HasOne(f => f.InvestmentFund).WithMany(f => f.InvestmentFundCategories).HasForeignKey(f => f.InvestmentFundId);
         }
 
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace FinanceManagement.Core.Entities
 {
@@ -9,5 +10,6 @@ namespace FinanceManagement.Core.Entities
         public string? Description { get; set; }
         public string? Currency { get; set; }
         public bool Deleted { get; set; }
+        public ICollection<InvestmentFundCategory>? InvestmentFundCategories { get; set; }
     }
 }
