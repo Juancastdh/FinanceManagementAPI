@@ -11,7 +11,7 @@ namespace FinanceManagement.API.MapperProfiles
         {
             CreateMap<InvestmentFundCategory, InvestmentFundCategoryReadDto>();
             CreateMap<InvestmentFundCategoryCreateDto, InvestmentFundCategory>();
-            CreateMap<InvestmentFundCategoryReadDto, InvestmentFund>();
+            CreateMap<InvestmentFundCategoryReadDto, InvestmentFundCategory>();
         }        
     }
 }
