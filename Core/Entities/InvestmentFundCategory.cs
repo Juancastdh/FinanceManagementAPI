@@ -10,5 +10,6 @@ namespace FinanceManagement.Core.Entities
         public bool Deleted { get; set; }
         public InvestmentFund? InvestmentFund { get; set; }
         public int InvestmentFundId { get; set; }
+        public ICollection<InvestmentFundTransaction>? InvestmentFundTransactions { get; set; }
     }
 }

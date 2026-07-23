@@ -11,5 +11,6 @@ namespace FinanceManagement.Core.Entities
         public string? Currency { get; set; }
         public bool Deleted { get; set; }
         public ICollection<InvestmentFundCategory>? InvestmentFundCategories { get; set; }
+        public ICollection<InvestmentFundTransaction>? InvestmentFundTransactions { get; set; }
     }
 }
