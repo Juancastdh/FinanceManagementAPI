@@ -12,5 +12,6 @@ namespace FinanceManagement.Core.Managers
         InvestmentFundTransaction GetInvestmentFundTransactionById(int id);
         void UpdateInvestmentFundTransaction(InvestmentFundTransaction investmentFundTransaction);
         void DeleteInvestmentFundTransactionById(int id);
+        decimal GetSumOfInvestmentFundTransactionValuesByInvestmentFundCategoryId(int investmentFundCategoryId);
     }
 }

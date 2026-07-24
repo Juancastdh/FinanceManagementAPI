@@ -5,6 +5,7 @@ using FinanceManagement.Core.UnitOfWork;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FinanceManagement.Core.Managers.Implementations
@@ -28,7 +29,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
 
-            if(investmentFundTransaction.Type == InvestmentFundTransactionType.Dividend)
+            if(investmentFundTransaction.Type == InvestmentFundTransactionType.Dividend && investmentFundTransaction.InvestmentFundCategoryId == null)
             {
                 IEnumerable<InvestmentFundTransaction> simplifiedContributionInvestmentFundTransactions = GetSimplifiedContributionInvestmentFundTransactionsBasedOnDividendTransaction(investmentFundTransaction);
 
@@ -48,13 +49,15 @@ namespace FinanceManagement.Core.Managers.Implementations
         {
             List<InvestmentFundTransaction> simplifiedContributionInvestmentFundTransactions = new List<InvestmentFundTransaction>();
             List<InvestmentFundCategory> investmentFundCategories = [.. GetInvestmentFundCategoriesByInvestmentFundId(investmentFundTransaction.InvestmentFundId)];
+            
 
             foreach (InvestmentFundCategory investmentFundCategory in investmentFundCategories)
             {
+                decimal percentageOfInvestmentFundCategoryValueInInvestmentFund = GetPercentageofInvestmentFundCategoryValueInInvestmentFund(investmentFundCategory.Id, investmentFundCategory.InvestmentFundId);
                 InvestmentFundTransaction simplifiedContributionInvestmentFundTransaction = new InvestmentFundTransaction
                 {
                     Date = investmentFundTransaction.Date,
-                    Amount = investmentFundTransaction.Amount,
+                    Amount = investmentFundTransaction.Amount * percentageOfInvestmentFundCategoryValueInInvestmentFund,
                     Type = investmentFundTransaction.Type,
                     InvestmentFundCategoryId = investmentFundCategory.Id,
                     Description = investmentFundTransaction.Description,
@@ -72,6 +75,42 @@ namespace FinanceManagement.Core.Managers.Implementations
             IRepository<InvestmentFundCategory> investmentFundCategoriesRepository = UnitOfWork.GetRepository<InvestmentFundCategory>();
             return investmentFundCategoriesRepository.GetAll(investmentFundCategory => investmentFundCategory.InvestmentFundId == investmentFundId);
         }
+
+        private decimal GetSumOfInvestmentFundTransactionValuesByInvestmentFundId(int investmentFundId)
+        {
+            IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
+            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll(investmentFundTransaction => investmentFundTransaction.InvestmentFundId == investmentFundId);
+
+            decimal sumOfInvestmentFundTransactionValues = 0;
+
+            foreach (InvestmentFundTransaction investmentFundTransaction in investmentFundTransactions)
+            {
+                if(investmentFundTransaction.Type == InvestmentFundTransactionType.Contribution || investmentFundTransaction.Type == InvestmentFundTransactionType.Dividend)
+                {
+                    sumOfInvestmentFundTransactionValues += investmentFundTransaction.Amount;
+                }
+                else if(investmentFundTransaction.Type == InvestmentFundTransactionType.Withdrawal)
+                {
+                    sumOfInvestmentFundTransactionValues -= investmentFundTransaction.Amount;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Invalid investment fund transaction type: {investmentFundTransaction.Type}");
+                }
+            }
+
+            return sumOfInvestmentFundTransactionValues;
+        }
+
+        private decimal GetPercentageofInvestmentFundCategoryValueInInvestmentFund(int investmentFundCategoryId, int investmentFundId)
+        {
+
+            decimal sumOfInvestmentFundTransactionValuesByInvestmentFundId = GetSumOfInvestmentFundTransactionValuesByInvestmentFundId(investmentFundId);
+            decimal sumOfInvestmentFundTransactionValuesByInvestmentFundCategoryId = GetSumOfInvestmentFundTransactionValuesByInvestmentFundCategoryId(investmentFundCategoryId);
+
+            return sumOfInvestmentFundTransactionValuesByInvestmentFundCategoryId / sumOfInvestmentFundTransactionValuesByInvestmentFundId;
+        }
+
 
 
         public InvestmentFundTransaction GetInvestmentFundTransactionById(int id)
@@ -101,6 +140,32 @@ namespace FinanceManagement.Core.Managers.Implementations
             investmentFundTransactionsRepository.DeleteById(id);
 
             UnitOfWork.SaveChanges();
+        }
+
+        public decimal GetSumOfInvestmentFundTransactionValuesByInvestmentFundCategoryId(int investmentFundCategoryId)
+        {
+            IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
+            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll().Where(investmentFundTransaction => investmentFundTransaction.InvestmentFundCategoryId == investmentFundCategoryId);
+
+            decimal sumOfInvestmentFundTransactionValues = 0;
+
+            foreach (InvestmentFundTransaction investmentFundTransaction in investmentFundTransactions)
+            {
+                if(investmentFundTransaction.Type == InvestmentFundTransactionType.Contribution || investmentFundTransaction.Type == InvestmentFundTransactionType.Dividend)
+                {
+                    sumOfInvestmentFundTransactionValues += investmentFundTransaction.Amount;
+                }
+                else if(investmentFundTransaction.Type == InvestmentFundTransactionType.Withdrawal)
+                {
+                    sumOfInvestmentFundTransactionValues -= investmentFundTransaction.Amount;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Invalid investment fund transaction type: {investmentFundTransaction.Type}");
+                }
+            }
+
+            return sumOfInvestmentFundTransactionValues;
         }
     }
 }
