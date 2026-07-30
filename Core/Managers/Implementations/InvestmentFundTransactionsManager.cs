@@ -19,10 +19,22 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork = unitOfWork;
         }
 
-        public IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions()
+        public IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null)
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
-            return investmentFundTransactionsRepository.GetAll();
+            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll();
+
+            if (investmentFundCategoryId.HasValue)
+            {
+                investmentFundTransactions = investmentFundTransactions.Where(t => t.InvestmentFundCategoryId == investmentFundCategoryId.Value);
+            }
+
+            if (investmentFundId.HasValue)
+            {
+                investmentFundTransactions = investmentFundTransactions.Where(t => t.InvestmentFundId == investmentFundId.Value);
+            }
+
+            return investmentFundTransactions;
         }
 
         public void AddInvestmentFundTransaction(InvestmentFundTransaction investmentFundTransaction)
