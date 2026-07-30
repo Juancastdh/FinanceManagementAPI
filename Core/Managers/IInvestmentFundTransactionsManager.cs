@@ -7,7 +7,7 @@ namespace FinanceManagement.Core.Managers
 {
     public interface IInvestmentFundTransactionsManager
     {
-        IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null);
+        IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null, DateTime? startDate = null, DateTime? endDate = null);
         void AddInvestmentFundTransaction(InvestmentFundTransaction investmentFundTransaction);
         InvestmentFundTransaction GetInvestmentFundTransactionById(int id);
         void UpdateInvestmentFundTransaction(InvestmentFundTransaction investmentFundTransaction);

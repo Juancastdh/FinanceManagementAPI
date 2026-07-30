@@ -23,9 +23,9 @@ namespace FinanceManagement.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<InvestmentFundTransactionReadDto>), 200)]
-        public IActionResult GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null)
+        public IActionResult GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
-            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = InvestmentFundTransactionsManager.GetAllInvestmentFundTransactions();
+            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = InvestmentFundTransactionsManager.GetAllInvestmentFundTransactions(investmentFundCategoryId, investmentFundId, startDate, endDate);
 
             IEnumerable<InvestmentFundTransactionReadDto> investmentFundTransactionReadDtos = Mapper.Map<IEnumerable<InvestmentFundTransactionReadDto>>(investmentFundTransactions);
 

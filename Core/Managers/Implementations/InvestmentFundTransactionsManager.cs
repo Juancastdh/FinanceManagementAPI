@@ -19,7 +19,7 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork = unitOfWork;
         }
 
-        public IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null)
+        public IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
             IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll();
@@ -32,6 +32,16 @@ namespace FinanceManagement.Core.Managers.Implementations
             if (investmentFundId.HasValue)
             {
                 investmentFundTransactions = investmentFundTransactions.Where(t => t.InvestmentFundId == investmentFundId.Value);
+            }
+
+            if (startDate.HasValue)
+            {
+                investmentFundTransactions = investmentFundTransactions.Where(t => t.Date >= startDate.Value);
+            }
+
+            if (endDate.HasValue)
+            {
+                investmentFundTransactions = investmentFundTransactions.Where(t => t.Date <= endDate.Value);
             }
 
             return investmentFundTransactions;
