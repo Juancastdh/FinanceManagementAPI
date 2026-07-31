@@ -7,7 +7,7 @@ namespace FinanceManagement.Core.Managers
 {
     public interface IInvestmentFundCategoriesManager
     {
-        IEnumerable<InvestmentFundCategory> GetAllInvestmentFundCategories(bool? deleted = null);
+        IEnumerable<InvestmentFundCategory> GetAllInvestmentFundCategories(bool? deleted = null, int? investmentFundId = null);
         void AddInvestmentFundCategory(InvestmentFundCategory investmentFundCategory);
         InvestmentFundCategory GetInvestmentFundCategoryById(int id);
         void UpdateInvestmentFundCategory(InvestmentFundCategory investmentFundCategory);

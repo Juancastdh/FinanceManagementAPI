@@ -5,6 +5,7 @@ using FinanceManagement.Core.UnitOfWork;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FinanceManagement.Core.Managers.Implementations
@@ -18,7 +19,7 @@ namespace FinanceManagement.Core.Managers.Implementations
             UnitOfWork = unitOfWork;
         }
 
-        public IEnumerable<InvestmentFundCategory> GetAllInvestmentFundCategories(bool? deleted = null)
+        public IEnumerable<InvestmentFundCategory> GetAllInvestmentFundCategories(bool? deleted = null, int? investmentFundId = null)
         {
 
 
@@ -35,7 +36,10 @@ namespace FinanceManagement.Core.Managers.Implementations
                 investmentFundCategories = investmentFundCategoriesRepository.GetAll(includeProperties: "InvestmentFund");
             }
 
-
+            if (investmentFundId != null)
+            {
+                investmentFundCategories = investmentFundCategories.Where(investmentFundCategory => investmentFundCategory.InvestmentFundId == investmentFundId);
+            }
 
             return investmentFundCategories;
 

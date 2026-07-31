@@ -23,9 +23,9 @@ namespace FinanceManagement.API.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<InvestmentFundCategoryReadDto>), 200)]
-        public IActionResult GetAllInvestmentFundCategories(bool? deleted = null)
+        public IActionResult GetAllInvestmentFundCategories(bool? deleted = null, int? investmentFundId = null)
         {
-            IEnumerable<InvestmentFundCategory> investmentFundCategories = InvestmentFundCategoriesManager.GetAllInvestmentFundCategories(deleted);
+            IEnumerable<InvestmentFundCategory> investmentFundCategories = InvestmentFundCategoriesManager.GetAllInvestmentFundCategories(deleted, investmentFundId);
 
             IEnumerable<InvestmentFundCategoryReadDto> investmentFundCategoryReadDtos = Mapper.Map<IEnumerable<InvestmentFundCategoryReadDto>>(investmentFundCategories);
 
