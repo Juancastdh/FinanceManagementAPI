@@ -22,7 +22,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         public IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
-            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll();
+            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll(includeProperties: "InvestmentFund,InvestmentFundCategory");
 
             if (investmentFundCategoryId.HasValue)
             {
@@ -101,8 +101,8 @@ namespace FinanceManagement.Core.Managers.Implementations
         private decimal GetSumOfInvestmentFundTransactionValuesByInvestmentFundId(int investmentFundId)
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
-            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll(investmentFundTransaction => investmentFundTransaction.InvestmentFundId == investmentFundId);
-
+ IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll(investmentFundTransaction => investmentFundTransaction.InvestmentFundId == investmentFundId);
+ 
             decimal sumOfInvestmentFundTransactionValues = 0;
 
             foreach (InvestmentFundTransaction investmentFundTransaction in investmentFundTransactions)
@@ -151,7 +151,20 @@ namespace FinanceManagement.Core.Managers.Implementations
         public void UpdateInvestmentFundTransaction(InvestmentFundTransaction investmentFundTransaction)
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
-            investmentFundTransactionsRepository.Update(investmentFundTransaction);
+            if(investmentFundTransaction.Type == InvestmentFundTransactionType.Dividend && investmentFundTransaction.InvestmentFundCategoryId == null)
+            {
+                DeleteInvestmentFundTransactionById(investmentFundTransaction.Id);
+                IEnumerable<InvestmentFundTransaction> simplifiedContributionInvestmentFundTransactions = GetSimplifiedContributionInvestmentFundTransactionsBasedOnDividendTransaction(investmentFundTransaction);
+
+                foreach (InvestmentFundTransaction simplifiedContributionInvestmentFundTransaction in simplifiedContributionInvestmentFundTransactions)
+                {
+                    investmentFundTransactionsRepository.Add(simplifiedContributionInvestmentFundTransaction);
+                }
+            }
+            else
+            {
+                investmentFundTransactionsRepository.Update(investmentFundTransaction);
+            }
             UnitOfWork.SaveChanges();
         }
 
