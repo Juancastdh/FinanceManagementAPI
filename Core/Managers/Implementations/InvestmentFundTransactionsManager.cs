@@ -22,7 +22,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         public IEnumerable<InvestmentFundTransaction> GetAllInvestmentFundTransactions(int? investmentFundCategoryId = null, int? investmentFundId = null, DateTime? startDate = null, DateTime? endDate = null)
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
-            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll(includeProperties: "InvestmentFund,InvestmentFundCategory");
+            IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll(includeProperties: "InvestmentFundCategory,InvestmentFund");
 
             if (investmentFundCategoryId.HasValue)
             {
@@ -102,7 +102,7 @@ namespace FinanceManagement.Core.Managers.Implementations
         {
             IRepository<InvestmentFundTransaction> investmentFundTransactionsRepository = UnitOfWork.GetRepository<InvestmentFundTransaction>();
  IEnumerable<InvestmentFundTransaction> investmentFundTransactions = investmentFundTransactionsRepository.GetAll(investmentFundTransaction => investmentFundTransaction.InvestmentFundId == investmentFundId);
- 
+
             decimal sumOfInvestmentFundTransactionValues = 0;
 
             foreach (InvestmentFundTransaction investmentFundTransaction in investmentFundTransactions)

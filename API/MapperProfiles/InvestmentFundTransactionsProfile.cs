@@ -12,6 +12,7 @@ namespace FinanceManagement.API.MapperProfiles
             CreateMap<InvestmentFundTransaction, InvestmentFundTransactionReadDto>();
             CreateMap<InvestmentFundTransactionCreateDto, InvestmentFundTransaction>();
             CreateMap<InvestmentFundTransactionReadDto, InvestmentFundTransaction>();
+            CreateMap<InvestmentFundTransactionUpdateDto, InvestmentFundTransaction>();
         }        
     }
 }

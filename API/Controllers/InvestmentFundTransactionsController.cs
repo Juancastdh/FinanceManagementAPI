@@ -59,7 +59,7 @@ namespace FinanceManagement.API.Controllers
 
         [HttpPut]
         [ProducesResponseType(200)]
-        public IActionResult UpdateInvestmentFundTransaction([FromBody] InvestmentFundTransactionReadDto investmentFundTransaction)
+        public IActionResult UpdateInvestmentFundTransaction([FromBody] InvestmentFundTransactionUpdateDto investmentFundTransaction)
         {
             InvestmentFundTransaction investmentFundTransactionToBeUpdated = Mapper.Map<InvestmentFundTransaction>(investmentFundTransaction);
 
